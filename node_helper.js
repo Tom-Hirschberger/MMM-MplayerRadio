@@ -223,7 +223,7 @@ module.exports = NodeHelper.create({
             }
           } else {
             if(!self.initialState){
-              self.sendSocketNotification("RADIO_CURRENT_STREAM_INFO",{
+              self.sendSocketNotification("RADIO_UPDATE_AFTER_PROFILE_CHANGE",{
                 curStationIndex: self.curStationIndex,
                 previousStationIndex: self.getNextStationId(self.curStationIndex, 1),
                 nextStationIndex: self.getNextStationId(self.curStationIndex, - 1),
