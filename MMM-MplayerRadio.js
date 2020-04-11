@@ -103,7 +103,7 @@ Module.register('MMM-MplayerRadio', {
 
       const wrapperNext = document.createElement("tr")
         wrapperNext.className=("nextWrapper")
-        if((this.nextStationIndex != null) && (this.curStationIndex !== this.nextStationIndex)){
+        if((this.nextStationIndex != null) && (this.curStationIndex !== this.nextStationIndex) && (this.previousStationIndex !== this.nextStationIndex)){
           const nextStationLogoWrapper = document.createElement("td")
             nextStationLogoWrapper.className = "logoWrapper"
             const nextStationLogo = document.createElement("img")
@@ -247,6 +247,12 @@ Module.register('MMM-MplayerRadio', {
       this.nextStationIndex = payload.nextStationIndex
       this.curStreamInfo = payload.curStreamInfo
       this.playing = true
+      this.updateDom()
+    } else if(notification === "RADIO_UPDATE_AFTER_PROFILE_CHANGE"){
+      this.curStationIndex = payload.curStationIndex
+      this.previousStationIndex = payload.previousStationIndex
+      this.nextStationIndex = payload.nextStationIndex
+      this.curStreamInfo = payload.curStreamInfo
       this.updateDom()
     }
   },

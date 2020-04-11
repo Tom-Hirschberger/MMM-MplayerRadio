@@ -10,6 +10,7 @@ module.exports = NodeHelper.create({
 
   start: function () {
     this.started = false
+    this.initialState = true
     this.curStationIndex = 0;
     this.curStationProcess = null
     this.currentProfile = ''
@@ -20,7 +21,6 @@ module.exports = NodeHelper.create({
   },
 
   playStation: function(stationId = null){
-    console.log("Playing station with id: "+stationId)
     const self = this
     self.stopStation()
     self.inStreamInfo = false
@@ -176,10 +176,13 @@ module.exports = NodeHelper.create({
       self.config = payload
       self.started = true
     } else if (notification === 'RADIO_NEXT'){
+      self.initialState = false
       self.playStation(self.getNextStationId(self.curStationIndex, -1))
     } else if (notification === 'RADIO_PREVIOUS'){
+      self.initialState = false
       self.playStation(self.getNextStationId(self.curStationIndex, 1))
     } else if (notification === 'RADIO_PLAY'){
+      self.initialState = false
       if(typeof payload.id !== 'undefined'){
         if((id > 0) && (id < (self.config.stations.length -1))){
           self.playStation(id)
@@ -191,15 +194,17 @@ module.exports = NodeHelper.create({
           }
         }
       } else if (self.curStationIndex != null){
-        self.playStation(self.curStationIndex)
+        self.playStation(self.getNextStationId(self.curStationIndex, 0))
       }
     } else if (notification === 'RADIO_STOP'){
+      self.initialState = false
       self.stopStation()
     } else if (notification === 'RADIO_TOGGLE'){
+      self.initialState = false
       if(self.curStationProcess !== null){
         self.stopStation()
       } else {
-        self.playStation(self.curStationIndex)
+        self.playStation(self.getNextStationId(self.curStationIndex, 0))
       }
     } else if (notification === 'CHANGED_PROFILE'){
       if(typeof payload.to !== 'undefined'){
@@ -207,11 +212,23 @@ module.exports = NodeHelper.create({
         self.currentProfilePattern = new RegExp('\\b'+payload.to+'\\b')
         if(self.config.changeStationOnProfileChange){
           var newId = self.getNextStationId(self.curStationIndex, 0)
-          if(newId !== self.curStationIndex){
-            if(self.playing){
-              self.playStation(newId)
-            } else {
-              self.stopStation(newId)
+          if((newId !== self.curStationIndex) && (!self.initialState)){
+            self.curStationIndex = newId
+            if(!self.initialState){
+              if(self.playing){
+                self.playStation(newId)
+              } else {
+                self.stopStation(newId)
+              }
+            }
+          } else {
+            if(!self.initialState){
+              self.sendSocketNotification("RADIO_CURRENT_STREAM_INFO",{
+                curStationIndex: self.curStationIndex,
+                previousStationIndex: self.getNextStationId(self.curStationIndex, 1),
+                nextStationIndex: self.getNextStationId(self.curStationIndex, - 1),
+                curStreamInfo: self.curStreamInfo
+              })
             }
           }
         }
