@@ -197,7 +197,6 @@ module.exports = NodeHelper.create({
         self.playStation(self.getNextStationId(self.curStationIndex, 0))
       }
     } else if (notification === 'RADIO_STOP'){
-      self.initialState = false
       self.stopStation()
     } else if (notification === 'RADIO_TOGGLE'){
       self.initialState = false
