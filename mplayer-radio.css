@@ -1,0 +1,17 @@
+.radioWrapper{
+    min-width: 150px;
+    max-height: 150px;
+}
+
+.radioTitle {
+    border-bottom: 5px;
+}
+
+svg[data-icon="noto:radio"] {
+    font-size: 135px;
+}
+
+.radioLogo {
+    max-width: 135px;
+    max-height: 135px;
+}
