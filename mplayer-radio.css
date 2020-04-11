@@ -9,77 +9,87 @@ svg[data-icon="noto:radio"] {
 }
 
 .mradio .previousWrapper {
-    margin-bottom: 5px;
     height: 51px;
-    vertical-align: center;
-}
-
-.mradio .nextWrapper {
-    margin-top: 5px;
-    height: 51px;
-    vertical-align: center;
-}
-
-.mradio .controlWrapper {
-    width: 100%;
-    margin: 0 auto;
-    vertical-align: center;
-}
-
-.mradio *.logoWrapper {
-    margin: 0 auto;
-    width: 30%;
-}
-
-.mradio .previousWrapper .logo {
-    max-height: 35px;
-    vertical-align: center;
-}
-
-.mradio .currentWrapper .logo {
-    max-height: 70px;
-    vertical-align: center;
-}
-
-.mradio .nextWrapper .logo {
-    max-height: 35px;
-    vertical-align: center;
-}
-
-.mradio *.titleWrapper {
-    margin-left: 10px;
-    width: 70%;
-    text-align: left;
-}
-
-.mradio .currentWrapper .title {
-    font-size: 20px;
 }
 
 .mradio .currentWrapper {
     height: 90px;
 }
 
-.mradio .currentWrapper.playing{
+.mradio .nextWrapper {
+    height: 51px;
+}
+
+.mradio .streamInfoWrapper {
+    padding-top: 5px;
+    height: 50px;
+}
+
+.mradio .controlWrapper {
+    padding-top: 5px;
+    width: 100%;
+}
+
+.mradio .logoWrapper {
+    width: 300px;
+    text-align: center;
+    margin: 10px;
+}
+
+.mradio .previousWrapper .logo {
+    margin-bottom: 5px;
+    max-height: 35px;
+    vertical-align: middle;
+}
+
+.mradio .currentWrapper .logo {
+    max-height: 70px;
+    vertical-align: middle;
+}
+
+.mradio .nextWrapper .logo {
+    max-height: 35px;
+    vertical-align: middle;
+}
+
+.mradio .titleWrapper {
+    margin: 10px;
+    width: 100px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.mradio .currentWrapper .title {
+    font-size: 20px;
+}
+
+.mradio .currentWrapper .logoWrapper {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.mradio .currentWrapper.playing .logoWrapper{
     background-color:#425a85;
-    border-radius: 5px;
 }
 
-.mradio .currentWrapper.playing .title {
-    font-weight: italic;
-}
-
-.mradio .currentWrapper.stopped{
+.mradio .currentWrapper.stopped .logoWrapper{
     background-color:#302f2d;
-    border-radius: 5px;
 }
 
-.mradio .currentWrapper.stopped .title {
+.mradio .currentWrapper .titleWrapper {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
     font-weight: bold;
 }
 
-.mradio .streamInfo {
-    margin-top: 10px;
+.mradio .currentWrapper.playing .titleWrapper {
+    font-style: italic;
+    background-color:#425a85;
+}
+
+.mradio .currentWrapper.stopped .titleWrapper {
+    font-style: normal;
+    background-color:#302f2d;
 }
 
 .mradio .controlInnerWrapper {

@@ -32,6 +32,7 @@ Module.register('MMM-MplayerRadio', {
     this.previousStationIndex = null;
     this.nextStationIndex = null;
     this.playing = false;
+    this.curStreamInfo = null;
   },
 
   /**
@@ -126,17 +127,16 @@ Module.register('MMM-MplayerRadio', {
         }
         innerWrapper.appendChild(wrapperNext)
 
-      if((this.curStreamInfo != null ) && (this.curStreamInfo != "")){
         const streamInfoWrapper = document.createElement("tr")
           streamInfoWrapper.className = "streamInfoWrapper"
+        if(this.curStreamInfo != null ){
           const streamInfo = document.createElement("td")
             streamInfo.setAttribute("colspan", "2")
             streamInfo.className = "streamInfo"
             streamInfo.innerHTML = this.curStreamInfo
           streamInfoWrapper.appendChild(streamInfo)
+        }
         innerWrapper.appendChild(streamInfoWrapper)
-      }
-
     } else {
       const noInfoWrapper = document.createElement("tr")
         noInfoWrapper.className = "noInfoWrapper"
@@ -148,6 +148,8 @@ Module.register('MMM-MplayerRadio', {
         noInfoWrapper.appendChild(noInfo)
       innerWrapper.appendChild(noInfoWrapper)
     }
+
+    
 
     if(this.config.showControls){
       const controlWrapper = document.createElement("tr")
@@ -229,12 +231,14 @@ Module.register('MMM-MplayerRadio', {
       this.curStationIndex = payload.curStationIndex
       this.previousStationIndex = payload.previousStationIndex
       this.nextStationIndex = payload.nextStationIndex
+      this.curStreamInfo = payload.curStreamInfo
       this.playing = true
       this.updateDom()
     } else if(notification === "RADIO_STOPPED"){
       this.curStationIndex = payload.curStationIndex
       this.previousStationIndex = payload.previousStationIndex
       this.nextStationIndex = payload.nextStationIndex
+      this.curStreamInfo = payload.curStreamInfo
       this.playing = false
       this.updateDom()
     } else if(notification === "RADIO_CURRENT_STREAM_INFO"){
