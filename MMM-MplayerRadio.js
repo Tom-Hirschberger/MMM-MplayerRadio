@@ -7,15 +7,15 @@ Module.register('MMM-MplayerRadio', {
   defaults: {
     mplayerPath: "/usr/bin/mplayer",
     mplayerCache: 512,
-    nowPlayingText: "Now playing: ",
-    stoppedText: "Stopped"
+    changeStationOnProfileChange: true,
+    showControls: true
   },
 
   /**
    * Apply any styles, if we have any.
    */
   getStyles() {
-    return ['simple-radio.css'];
+    return ['mplayer-radio.css'];
   },
 
   getScripts: function() {
@@ -29,48 +29,186 @@ Module.register('MMM-MplayerRadio', {
     Log.info("Starting module: " + this.name);
     this.sendSocketNotification('CONFIG', this.config);
     this.curStationIndex = null;
+    this.previousStationIndex = null;
+    this.nextStationIndex = null;
+    this.playing = false;
   },
 
   /**
    * Render the cicles for each page, and highlighting the page we're on.
    */
   getDom() {
+    const self = this
     const wrapper = document.createElement("div")
-    const innerWrapper = document.createElement("span")
-      innerWrapper.className="radioWrapper"
-    wrapper.appendChild(innerWrapper)
-    if(this.curStationIndex !== null){
-      if(this.config.nowPlayingText){
-        const title = document.createElement("div")
-          title.className = "radioTitle playing"
-        title.innerHTML = "Now Playing: "+this.config.stations[this.curStationIndex].title
-        innerWrapper.appendChild(title)
+    const innerWrapper = document.createElement("table")
+      innerWrapper.className = "mradio"
+    if(this.curStationIndex != null){
+      const wrapperPrevious = document.createElement("tr")
+      wrapperPrevious.className=("previousWrapper")
+      if((this.previousStationIndex != null) && (this.curStationIndex !== this.previousStationIndex)){
+        const previousStationLogoWrapper = document.createElement("td")
+          previousStationLogoWrapper.className = "logoWrapper"
+          const previousStationLogo = document.createElement("img")
+            previousStationLogo.className = "logo"
+            previousStationLogo.alt = "No Image"
+            if(typeof this.config.stations[this.previousStationIndex].logo !== "undefined"){
+              previousStationLogo.src = this.config.stations[this.previousStationIndex].logo
+            } else {
+              previousStationLogo.src = "./MMM-MplayerRadio/radio-freepnglogos.png"
+            }
+          previousStationLogoWrapper.appendChild(previousStationLogo)
+        wrapperPrevious.appendChild(previousStationLogoWrapper)
+
+        const previousStationTitleWrapper = document.createElement("td")
+          previousStationTitleWrapper.className = "titleWrapper"
+          const previousStationTitle = document.createElement("span")
+            previousStationTitle.className = "title"
+            previousStationTitle.innerHTML = this.config.stations[this.previousStationIndex].title
+          previousStationTitleWrapper.appendChild(previousStationTitle)
+        wrapperPrevious.appendChild(previousStationTitleWrapper)
+      }
+      innerWrapper.appendChild(wrapperPrevious)
+
+      const wrapperCurrent = document.createElement("tr")
+        if(this.playing){
+          wrapperCurrent.className=("currentWrapper playing")
+        } else {
+          wrapperCurrent.className=("currentWrapper stopped")
+        }
+        
+        if(this.curStationIndex != null){
+          const curStationLogoWrapper = document.createElement("td")
+            curStationLogoWrapper.className = "logoWrapper"
+            const curStationLogo = document.createElement("img")
+              curStationLogo.className = "logo"
+              curStationLogo.alt = "No Image"
+              if(typeof this.config.stations[this.curStationIndex].logo !== "undefined"){
+                curStationLogo.src = this.config.stations[this.curStationIndex].logo
+              } else {
+                curStationLogo.src = "./MMM-MplayerRadio/radio-freepnglogos.png"
+              }
+            curStationLogoWrapper.appendChild(curStationLogo)
+          wrapperCurrent.appendChild(curStationLogoWrapper)
+
+          const currentStationTitleWrapper = document.createElement("td")
+              currentStationTitleWrapper.className = "titleWrapper"
+            const currentStationTitle = document.createElement("span")
+              currentStationTitle.className = "title"
+              currentStationTitle.innerHTML = this.config.stations[this.curStationIndex].title
+            currentStationTitleWrapper.appendChild(currentStationTitle)
+          wrapperCurrent.appendChild(currentStationTitleWrapper)
+        }
+        innerWrapper.appendChild(wrapperCurrent)
+
+      const wrapperNext = document.createElement("tr")
+        wrapperNext.className=("nextWrapper")
+        if((this.nextStationIndex != null) && (this.curStationIndex !== this.nextStationIndex)){
+          const nextStationLogoWrapper = document.createElement("td")
+            nextStationLogoWrapper.className = "logoWrapper"
+            const nextStationLogo = document.createElement("img")
+              nextStationLogo.className = "logo"
+              nextStationLogo.alt = "No Image"
+              if(typeof this.config.stations[this.nextStationIndex].logo !== "undefined"){
+                nextStationLogo.src = this.config.stations[this.nextStationIndex].logo
+              } else {
+                nextStationLogo.src = "./MMM-MplayerRadio/radio-freepnglogos.png"
+              }
+            nextStationLogoWrapper.appendChild(nextStationLogo)
+          wrapperNext.appendChild(nextStationLogoWrapper)
+
+          const nextStationTitleWrapper = document.createElement("td")
+              nextStationTitleWrapper.className = "titleWrapper"
+            const nextStationTitle = document.createElement("span")
+              nextStationTitle.className = "title"
+              nextStationTitle.innerHTML = this.config.stations[this.nextStationIndex].title
+            nextStationTitleWrapper.appendChild(nextStationTitle)
+          wrapperNext.appendChild(nextStationTitleWrapper)
+        }
+        innerWrapper.appendChild(wrapperNext)
+
+      if((this.curStreamInfo != null ) && (this.curStreamInfo != "")){
+        const streamInfoWrapper = document.createElement("tr")
+          streamInfoWrapper.className = "streamInfoWrapper"
+          const streamInfo = document.createElement("td")
+            streamInfo.setAttribute("colspan", "2")
+            streamInfo.className = "streamInfo"
+            streamInfo.innerHTML = this.curStreamInfo
+          streamInfoWrapper.appendChild(streamInfo)
+        innerWrapper.appendChild(streamInfoWrapper)
       }
 
-      if(typeof this.config.stations[this.curStationIndex].logo !== 'undefined'){
-        const logoWrapper = document.createElement("span")
-          logoWrapper.className=("radioLogoWrapper")
-
-          const img = document.createElement("img")
-              img.className = "radioLogo"
-              img.alt = "No Image"
-              img.src = this.config.stations[this.curStationIndex].logo
-          logoWrapper.appendChild(img)
-        innerWrapper.appendChild(logoWrapper)
-      }
     } else {
-      if(this.config.stoppedText !== null){
-        const stopText = document.createElement("div")
-          stopText.className = "radioTitle stopped"
-          stopText.innerHTML = this.config.stoppedText
-        innerWrapper.appendChild(stopText)
-      }
-      const title = document.createElement("span")
-        title.className = "radioTitle stopped iconify"
-        title.setAttribute("data-icon","noto:radio")
-        title.setAttribute("data-inline","false")
-      innerWrapper.appendChild(title)
+      const noInfoWrapper = document.createElement("tr")
+        noInfoWrapper.className = "noInfoWrapper"
+        const noInfo = document.createElement("td")
+          noInfo.setAttribute("colspan", "2")
+          noInfo.className = "noInfoWrapper iconify"
+          noInfo.setAttribute("data-icon","noto:radio")
+          noInfo.setAttribute("data-inline","false")
+        noInfoWrapper.appendChild(noInfo)
+      innerWrapper.appendChild(noInfoWrapper)
     }
+
+    if(this.config.showControls){
+      const controlWrapper = document.createElement("tr")
+        controlWrapper.className = "controlWrapper"
+
+        const controlInnerWrapper = document.createElement("td")
+          controlInnerWrapper.className = "controlInnerWrapper"
+          controlInnerWrapper.setAttribute("colspan", "2")
+
+        const prevButtonWrapper = document.createElement("span")
+          prevButtonWrapper.className = "button previousButtonWrapper"
+          prevButtonWrapper.addEventListener("click", ()=>{self.sendSocketNotification("RADIO_PREVIOUS")})
+
+          const prevButton = document.createElement("span")
+            prevButton.className = "button previousButton iconify"
+            prevButton.setAttribute("data-icon", "ic-round-skip-previous")
+            prevButton.setAttribute("data-inline", "false")
+          prevButtonWrapper.appendChild(prevButton)
+          controlInnerWrapper.appendChild(prevButtonWrapper)
+        
+        if(this.playing){
+          const stopButtonWrapper = document.createElement("span")
+            stopButtonWrapper.className = "button stopButtonWrapper"
+            stopButtonWrapper.addEventListener("click", ()=>{self.sendSocketNotification("RADIO_STOP")})
+
+            const stopButton = document.createElement("span")
+              stopButton.className = "button stopButton iconify"
+              stopButton.setAttribute("data-icon", "ic-round-stop")
+              stopButton.setAttribute("data-inline", "false")
+            stopButtonWrapper.appendChild(stopButton)
+            controlInnerWrapper.appendChild(stopButtonWrapper)
+        } else {
+          const playButtonWrapper = document.createElement("span")
+            playButtonWrapper.className = "button playButtonWrapper"
+            playButtonWrapper.addEventListener("click", ()=>{self.sendSocketNotification("RADIO_PLAY")})
+
+            const playButton = document.createElement("span")
+              playButton.className = "button playButton iconify"
+              playButton.setAttribute("data-icon", "ic-round-play-arrow")
+              playButton.setAttribute("data-inline", "false")
+            playButtonWrapper.appendChild(playButton)
+            controlInnerWrapper.appendChild(playButtonWrapper)
+        }
+
+        const nextButtonWrapper = document.createElement("span")
+            nextButtonWrapper.className = "button nextButtonWrapper"
+            nextButtonWrapper.addEventListener("click", ()=>{self.sendSocketNotification("RADIO_NEXT")})
+
+          const nextButton = document.createElement("span")
+            nextButton.className = "button nextButton iconify"
+            nextButton.addEventListener("click", ()=>{self.sendSocketNotification("RADIO_NEXT")})
+            nextButton.setAttribute("data-icon", "ic-round-skip-next")
+            nextButton.setAttribute("data-inline", "false")
+          nextButtonWrapper.appendChild(nextButton)
+        controlInnerWrapper.appendChild(nextButtonWrapper)
+        
+        controlWrapper.appendChild(controlInnerWrapper)
+        innerWrapper.appendChild(controlWrapper)
+    }
+
+    wrapper.appendChild(innerWrapper)
     return wrapper;
   },
 
@@ -88,10 +226,23 @@ Module.register('MMM-MplayerRadio', {
 
   socketNotificationReceived: function (notification, payload) {
     if(notification === "RADIO_PLAYING"){
-      this.curStationIndex = payload.id
+      this.curStationIndex = payload.curStationIndex
+      this.previousStationIndex = payload.previousStationIndex
+      this.nextStationIndex = payload.nextStationIndex
+      this.playing = true
       this.updateDom()
     } else if(notification === "RADIO_STOPPED"){
-      this.curStationIndex = null
+      this.curStationIndex = payload.curStationIndex
+      this.previousStationIndex = payload.previousStationIndex
+      this.nextStationIndex = payload.nextStationIndex
+      this.playing = false
+      this.updateDom()
+    } else if(notification === "RADIO_CURRENT_STREAM_INFO"){
+      this.curStationIndex = payload.curStationIndex
+      this.previousStationIndex = payload.previousStationIndex
+      this.nextStationIndex = payload.nextStationIndex
+      this.curStreamInfo = payload.curStreamInfo
+      this.playing = true
       this.updateDom()
     }
   },

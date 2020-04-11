@@ -1,17 +1,95 @@
-.radioWrapper{
-    min-width: 150px;
-    max-height: 150px;
-}
-
-.radioTitle {
-    border-bottom: 5px;
-}
-
 svg[data-icon="noto:radio"] {
-    font-size: 135px;
+    font-size: 140px;
 }
 
-.radioLogo {
-    max-width: 135px;
-    max-height: 135px;
+.mradio {
+    width: 100%;
+    font-size: 16px;
+    font-weight: normal;
+}
+
+.mradio .previousWrapper {
+    margin-bottom: 5px;
+    height: 51px;
+    vertical-align: center;
+}
+
+.mradio .nextWrapper {
+    margin-top: 5px;
+    height: 51px;
+    vertical-align: center;
+}
+
+.mradio .controlWrapper {
+    width: 100%;
+    margin: 0 auto;
+    vertical-align: center;
+}
+
+.mradio *.logoWrapper {
+    margin: 0 auto;
+    width: 30%;
+}
+
+.mradio .previousWrapper .logo {
+    max-height: 35px;
+    vertical-align: center;
+}
+
+.mradio .currentWrapper .logo {
+    max-height: 70px;
+    vertical-align: center;
+}
+
+.mradio .nextWrapper .logo {
+    max-height: 35px;
+    vertical-align: center;
+}
+
+.mradio *.titleWrapper {
+    margin-left: 10px;
+    width: 70%;
+    text-align: left;
+}
+
+.mradio .currentWrapper .title {
+    font-size: 20px;
+}
+
+.mradio .currentWrapper {
+    height: 90px;
+}
+
+.mradio .currentWrapper.playing{
+    background-color:#425a85;
+    border-radius: 5px;
+}
+
+.mradio .currentWrapper.playing .title {
+    font-weight: italic;
+}
+
+.mradio .currentWrapper.stopped{
+    background-color:#302f2d;
+    border-radius: 5px;
+}
+
+.mradio .currentWrapper.stopped .title {
+    font-weight: bold;
+}
+
+.mradio .streamInfo {
+    margin-top: 10px;
+}
+
+.mradio .controlInnerWrapper {
+    width: 100%;
+    text-align: center;
+}
+
+.mradio .controlWrapper .button {
+    height: 30px;
+    width: 30px;
+    margin-left: 5px;
+    margin-right: 5px;
 }
