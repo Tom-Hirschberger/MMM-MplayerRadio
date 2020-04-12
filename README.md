@@ -117,6 +117,7 @@ You can try it without an asound.conf. If you get no sound try adding this one a
 | title | The title of the station which will be displayed beside the logo | true |
 | url | The url of the .m3u file. If you want to use an local one put it inside the public folder and use an url like "./MMM-MplayerRadio/YOUR_FILE.m3u". | true |
 | logo | The url of the logo which should be displayed for this station. If you want to use an local one use an url like "./MMM-MplayerRadio/YOUR_LOGO_FILE". If no logo is specified the configured default logo is used instead | false |
+| mplayerCache | If you like you can provide an different cache size for specific stations. i.e. because the stream is very slow or buggy | false |
 | profiles | If you want this station only be visible/playable in specific profiles add the profiles to this string (i.e. "pageOne pageTwo"). If the string is missing/not set the station can be used in every profile | false |
 
 
