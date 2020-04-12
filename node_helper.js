@@ -125,49 +125,52 @@ module.exports = NodeHelper.create({
   getNextStationId: function(curId, type=1){
     const self = this
     var retId = null
-    if(type > 0){
-      var newId = curId
-      for(var i = 0; i < self.config.stations.length; i++){
-        newId -= 1
-        if(newId < 0){
-          newId = self.config.stations.length - 1
+    if(curId !== null){
+      if(type > 0){
+        var newId = curId
+        for(var i = 0; i < self.config.stations.length; i++){
+          newId -= 1
+          if(newId < 0){
+            newId = self.config.stations.length - 1
+          }
+  
+          if(
+            (typeof self.config.stations[newId].profiles === 'undefined') || 
+            (self.currentProfilePattern.test(self.config.stations[newId].profiles))
+          ){
+            retId = newId
+            break
+          }
         }
-
+      } else if(type < 0){
+        var newId = curId
+        for(var i = 0; i < self.config.stations.length; i++){
+          newId += 1
+          if(newId > self.config.stations.length - 1){
+            newId = 0
+          }
+  
+          if(
+            (typeof self.config.stations[newId].profiles === 'undefined') || 
+            (self.currentProfilePattern.test(self.config.stations[newId].profiles))
+          ){
+            retId = newId
+            break
+          }
+        }
+      } else if(type === 0){
         if(
-          (typeof self.config.stations[newId].profiles === 'undefined') || 
-          (self.currentProfilePattern.test(self.config.stations[newId].profiles))
+          (typeof self.config.stations[curId].profiles === 'undefined') || 
+          (self.currentProfilePattern.test(self.config.stations[curId].profiles))
         ){
-          retId = newId
-          break
+          return curId
+        } else {
+          return self.getNextStationId(curId, 1)
         }
       }
-    } else if(type < 0){
-      var newId = curId
-      for(var i = 0; i < self.config.stations.length; i++){
-        newId += 1
-        if(newId > self.config.stations.length - 1){
-          newId = 0
-        }
-
-        if(
-          (typeof self.config.stations[newId].profiles === 'undefined') || 
-          (self.currentProfilePattern.test(self.config.stations[newId].profiles))
-        ){
-          retId = newId
-          break
-        }
-      }
-    } else if(type === 0){
-      if(
-        (typeof self.config.stations[curId].profiles === 'undefined') || 
-        (self.currentProfilePattern.test(self.config.stations[curId].profiles))
-      ){
-        return curId
-      } else {
-        return self.getNextStationId(curId, 1)
-      }
+    } else {
+      return self.getNextStationId(0,1)
     }
-
     return retId
   },
 

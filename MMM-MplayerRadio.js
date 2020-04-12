@@ -8,7 +8,14 @@ Module.register('MMM-MplayerRadio', {
     mplayerPath: "/usr/bin/mplayer",
     mplayerCache: 512,
     changeStationOnProfileChange: true,
-    showControls: true
+    showControls: true,
+    showStations: true,
+    missingLogoUrl: "./MMM-MplayerRadio/radio-freepnglogos.png",
+    noInfoIcon: "noto:radio",
+    previousIcon: "ic-round-skip-previous",
+    playIcon: "ic-round-play-arrow",
+    stopIcon: "ic-round-stop",
+    nextIcon: "ic-round-skip-next"
   },
 
   /**
@@ -43,7 +50,7 @@ Module.register('MMM-MplayerRadio', {
     const wrapper = document.createElement("div")
     const innerWrapper = document.createElement("table")
       innerWrapper.className = "mradio"
-    if(this.curStationIndex != null){
+    if(this.config.showStations && (this.curStationIndex != null)){
       const wrapperPrevious = document.createElement("tr")
       wrapperPrevious.className=("previousWrapper")
       if((this.previousStationIndex != null) && (this.curStationIndex !== this.previousStationIndex)){
@@ -55,7 +62,7 @@ Module.register('MMM-MplayerRadio', {
             if(typeof this.config.stations[this.previousStationIndex].logo !== "undefined"){
               previousStationLogo.src = this.config.stations[this.previousStationIndex].logo
             } else {
-              previousStationLogo.src = "./MMM-MplayerRadio/radio-freepnglogos.png"
+              previousStationLogo.src = this.config.missingLogoUrl
             }
           previousStationLogoWrapper.appendChild(previousStationLogo)
         wrapperPrevious.appendChild(previousStationLogoWrapper)
@@ -86,7 +93,7 @@ Module.register('MMM-MplayerRadio', {
               if(typeof this.config.stations[this.curStationIndex].logo !== "undefined"){
                 curStationLogo.src = this.config.stations[this.curStationIndex].logo
               } else {
-                curStationLogo.src = "./MMM-MplayerRadio/radio-freepnglogos.png"
+                curStationLogo.src = this.config.missingLogoUrl
               }
             curStationLogoWrapper.appendChild(curStationLogo)
           wrapperCurrent.appendChild(curStationLogoWrapper)
@@ -143,13 +150,11 @@ Module.register('MMM-MplayerRadio', {
         const noInfo = document.createElement("td")
           noInfo.setAttribute("colspan", "2")
           noInfo.className = "noInfoWrapper iconify"
-          noInfo.setAttribute("data-icon","noto:radio")
+          noInfo.setAttribute("data-icon",this.config.noInfoIcon)
           noInfo.setAttribute("data-inline","false")
         noInfoWrapper.appendChild(noInfo)
       innerWrapper.appendChild(noInfoWrapper)
     }
-
-    
 
     if(this.config.showControls){
       const controlWrapper = document.createElement("tr")
@@ -165,7 +170,7 @@ Module.register('MMM-MplayerRadio', {
 
           const prevButton = document.createElement("span")
             prevButton.className = "button previousButton iconify"
-            prevButton.setAttribute("data-icon", "ic-round-skip-previous")
+            prevButton.setAttribute("data-icon", this.config.previousIcon)
             prevButton.setAttribute("data-inline", "false")
           prevButtonWrapper.appendChild(prevButton)
           controlInnerWrapper.appendChild(prevButtonWrapper)
@@ -177,7 +182,7 @@ Module.register('MMM-MplayerRadio', {
 
             const stopButton = document.createElement("span")
               stopButton.className = "button stopButton iconify"
-              stopButton.setAttribute("data-icon", "ic-round-stop")
+              stopButton.setAttribute("data-icon", this.config.stopIcon)
               stopButton.setAttribute("data-inline", "false")
             stopButtonWrapper.appendChild(stopButton)
             controlInnerWrapper.appendChild(stopButtonWrapper)
@@ -188,7 +193,7 @@ Module.register('MMM-MplayerRadio', {
 
             const playButton = document.createElement("span")
               playButton.className = "button playButton iconify"
-              playButton.setAttribute("data-icon", "ic-round-play-arrow")
+              playButton.setAttribute("data-icon", this.config.playIcon)
               playButton.setAttribute("data-inline", "false")
             playButtonWrapper.appendChild(playButton)
             controlInnerWrapper.appendChild(playButtonWrapper)
@@ -201,7 +206,7 @@ Module.register('MMM-MplayerRadio', {
           const nextButton = document.createElement("span")
             nextButton.className = "button nextButton iconify"
             nextButton.addEventListener("click", ()=>{self.sendSocketNotification("RADIO_NEXT")})
-            nextButton.setAttribute("data-icon", "ic-round-skip-next")
+            nextButton.setAttribute("data-icon", this.config.nextIcon)
             nextButton.setAttribute("data-inline", "false")
           nextButtonWrapper.appendChild(nextButton)
         controlInnerWrapper.appendChild(nextButtonWrapper)
