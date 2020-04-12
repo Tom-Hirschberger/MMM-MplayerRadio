@@ -10,6 +10,7 @@ Module.register('MMM-MplayerRadio', {
     changeStationOnProfileChange: true,
     showControls: true,
     showStations: true,
+    displayStationsOnStartup: false,
     missingLogoUrl: "./MMM-MplayerRadio/radio-freepnglogos.png",
     noInfoIcon: "noto:radio",
     previousIcon: "ic-round-skip-previous",
@@ -40,6 +41,10 @@ Module.register('MMM-MplayerRadio', {
     this.nextStationIndex = null;
     this.playing = false;
     this.curStreamInfo = null;
+
+    if(this.config.displayStationsOnStartup){
+      this.sendSocketNotification("RADIO_INIT")
+    }
   },
 
   /**

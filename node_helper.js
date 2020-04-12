@@ -180,6 +180,14 @@ module.exports = NodeHelper.create({
     if (notification === 'CONFIG' && self.started === false) {
       self.config = payload
       self.started = true
+    } else if (notification === 'RADIO_INIT'){
+      self.initialState = false
+      self.sendSocketNotification("RADIO_UPDATE_AFTER_PROFILE_CHANGE",{
+        curStationIndex: self.curStationIndex,
+        previousStationIndex: self.getNextStationId(self.curStationIndex, 1),
+        nextStationIndex: self.getNextStationId(self.curStationIndex, - 1),
+        curStreamInfo: self.curStreamInfo
+      })
     } else if (notification === 'RADIO_NEXT'){
       self.initialState = false
       self.playStation(self.getNextStationId(self.curStationIndex, -1))
