@@ -107,6 +107,8 @@ module.exports = NodeHelper.create({
   stopStation: function(){
     const self = this
     self.playing = false
+    self.inStreamInfo = false
+    self.curStreamInfo = "&nbsp;"
     if(self.curStationProcess){
       console.log("Killing old station process")
       self.curStationProcess.kill()
@@ -115,7 +117,7 @@ module.exports = NodeHelper.create({
         curStationIndex: self.curStationIndex,
         previousStationIndex: self.getNextStationId(self.curStationIndex, 1),
         nextStationIndex: self.getNextStationId(self.curStationIndex, -1),
-        curStreamInfo: "&nbsp;"
+        curStreamInfo: self.curStreamInfo
       })
     }
   },
@@ -222,7 +224,13 @@ module.exports = NodeHelper.create({
                 if(self.playing){
                   self.playStation(newId)
                 } else {
-                  self.stopStation(newId)
+                  self.stopStation()
+                  self.sendSocketNotification("RADIO_UPDATE_AFTER_PROFILE_CHANGE",{
+                    curStationIndex: self.curStationIndex,
+                    previousStationIndex: self.getNextStationId(self.curStationIndex, 1),
+                    nextStationIndex: self.getNextStationId(self.curStationIndex, - 1),
+                    curStreamInfo: self.curStreamInfo
+                  })
                 }
               }
             } else {
