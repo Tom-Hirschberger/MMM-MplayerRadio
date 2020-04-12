@@ -3,9 +3,12 @@ svg[data-icon="noto:radio"] {
 }
 
 .mradio {
-    width: 100%;
+    min-width: 400px;
     font-size: 16px;
     font-weight: normal;
+    /* background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.33, rgb(35, 56, 56)), color-stop(0.67, rgb(53, 80, 80))); */
+    /* background-image: -moz-linear-gradient(center bottom, rgb(35, 56, 56) 33%, rgb(53, 80, 80) 67% ); */
+    padding: 5px;
 }
 
 .mradio .previousWrapper {
@@ -31,7 +34,7 @@ svg[data-icon="noto:radio"] {
 }
 
 .mradio .logoWrapper {
-    width: 300px;
+    width: 250px;
     text-align: center;
     margin: 10px;
 }

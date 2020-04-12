@@ -209,16 +209,29 @@ module.exports = NodeHelper.create({
       if(typeof payload.to !== 'undefined'){
         self.currentProfile = payload.to
         self.currentProfilePattern = new RegExp('\\b'+payload.to+'\\b')
-        if(self.config.changeStationOnProfileChange){
-          var newId = self.getNextStationId(self.curStationIndex, 0)
-          if((newId !== self.curStationIndex) && (!self.initialState)){
-            self.curStationIndex = newId
-            if(!self.initialState){
-              if(self.playing){
-                self.playStation(newId)
-              } else {
-                self.stopStation(newId)
+
+        if(self.initialState){
+          self.curStationIndex = self.getNextStationId(self.curStationIndex, 0)
+        } else {
+          if(self.config.changeStationOnProfileChange){
+            var newId = self.getNextStationId(self.curStationIndex, 0)
+  
+            if(newId !== self.curStationIndex){
+              self.curStationIndex = newId
+              if(!self.initialState){
+                if(self.playing){
+                  self.playStation(newId)
+                } else {
+                  self.stopStation(newId)
+                }
               }
+            } else {
+              self.sendSocketNotification("RADIO_UPDATE_AFTER_PROFILE_CHANGE",{
+                curStationIndex: self.curStationIndex,
+                previousStationIndex: self.getNextStationId(self.curStationIndex, 1),
+                nextStationIndex: self.getNextStationId(self.curStationIndex, - 1),
+                curStreamInfo: self.curStreamInfo
+              })
             }
           } else {
             if(!self.initialState){
