@@ -54,6 +54,9 @@ Module.register('MMM-MplayerRadio', {
       const wrapperPrevious = document.createElement("tr")
       wrapperPrevious.className=("previousWrapper")
       if((this.previousStationIndex != null) && (this.curStationIndex !== this.previousStationIndex)){
+        wrapperPrevious.addEventListener("click", ()=>{self.sendSocketNotification("RADIO_PLAY", {
+          id: this.previousStationIndex
+        })})
         const previousStationLogoWrapper = document.createElement("td")
           previousStationLogoWrapper.className = "logoWrapper"
           const previousStationLogo = document.createElement("img")
@@ -85,6 +88,9 @@ Module.register('MMM-MplayerRadio', {
         }
         
         if(this.curStationIndex != null){
+          wrapperCurrent.addEventListener("click", ()=>{self.sendSocketNotification("RADIO_PLAY", {
+            id: this.curStationIndex
+          })})
           const curStationLogoWrapper = document.createElement("td")
             curStationLogoWrapper.className = "logoWrapper"
             const curStationLogo = document.createElement("img")
@@ -111,6 +117,9 @@ Module.register('MMM-MplayerRadio', {
       const wrapperNext = document.createElement("tr")
         wrapperNext.className=("nextWrapper")
         if((this.nextStationIndex != null) && (this.curStationIndex !== this.nextStationIndex) && (this.previousStationIndex !== this.nextStationIndex)){
+          wrapperNext.addEventListener("click", ()=>{self.sendSocketNotification("RADIO_PLAY", {
+            id: this.nextStationIndex
+          })})
           const nextStationLogoWrapper = document.createElement("td")
             nextStationLogoWrapper.className = "logoWrapper"
             const nextStationLogo = document.createElement("img")

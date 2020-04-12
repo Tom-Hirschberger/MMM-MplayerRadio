@@ -189,8 +189,8 @@ module.exports = NodeHelper.create({
     } else if (notification === 'RADIO_PLAY'){
       self.initialState = false
       if(typeof payload.id !== 'undefined'){
-        if((id > 0) && (id < (self.config.stations.length -1))){
-          self.playStation(id)
+        if((payload.id >= 0) && (payload.id < self.config.stations.length)){
+          self.playStation(payload.id)
         }
       } else if (typeof payload.title !== 'undefined'){
         for(var id in self.config.stations){
