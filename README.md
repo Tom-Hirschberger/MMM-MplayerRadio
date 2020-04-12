@@ -6,6 +6,8 @@ Different stations can be used in different profiles (profile string in configur
 Most of my stations are listed at http://www.surfmusik.de. This site provides mostly an m3u-file of the stations for external players. Simple choose the station you like, listen to it in the browser of your choice and right click on the "External Player" link. Copy the link and add it to your configuration.
 The logos of the stations can be choosen by url (good resource https://commons.wikimedia.org/wiki/Category:Radio_station_logos_of_Germany). If no logo is specified an dummy is used.
 
+Hint: It may be possible to play any songs you like by creating an .m3u file of them and adding the file to local public folder. But i did not test this.
+
 ## Screenshots ##
 ### In Action ###
 ![alt text](https://github.com/Tom-Hirschberger/MMM-MplayerRadio/raw/master/examples/threeStationsOnePlaying.png "ThreeStations with one playing")
@@ -19,27 +21,34 @@ The logos of the stations can be choosen by url (good resource https://commons.w
 ### System ###
 #### Mplayer ####
 Make sure you installed mplayer on your system. Simple type the following command
+```
     mplayer
-
+```
 The output should look like
+```
     MPlayer 1.3.0 (Debian), built with gcc-8 (C) 2000-2016 MPlayer Team
-
+```
 If there is something like
+```
     -bash: mplayer: command not found
+```
 
 Install the player with
+```
     sudo apt update && sudo apt install mplayer
+```
 
 #### Asound ####
 I use an Hifiberry DAC device as audio output. You might need to add an asound.conf to get sound output on the mirror.
 This is my file "/etc/asound.conf"
+```
     pcm.!default  {
         type hw card 0
     }
     ctl.!default {
         type hw card 0
     }
-
+```
 You can try it without an asound.conf. If you get no sound try adding this one and restart the pi.
 
 
