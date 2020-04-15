@@ -110,6 +110,7 @@ You can try it without an asound.conf. If you get no sound try adding this one a
 | playIcon | This icon is used in the control section if the player is currently playing. It is an iconify icon, too. | String | "ic-round-play-arrow" |
 | mplayerPath | To path to the mplayer binary. If you do not know use the "which mplayer" command to find out | String | /usr/bin/mplayer |
 | mplayerCache | The mplayer (can) use an cache for web based stations | Integer | 512 |
+| animationSpeed | If the station changes or the stream info will be updated the change will be animated within this speed (ms) | Integer | 500 |
 
 ### Stations ###
 | Option  | Description | Mandatory |

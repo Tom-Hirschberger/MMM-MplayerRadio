@@ -16,7 +16,8 @@ Module.register('MMM-MplayerRadio', {
     previousIcon: "ic-round-skip-previous",
     playIcon: "ic-round-play-arrow",
     stopIcon: "ic-round-stop",
-    nextIcon: "ic-round-skip-next"
+    nextIcon: "ic-round-skip-next",
+    animationSpeed: 500
   },
 
   /**
@@ -252,27 +253,27 @@ Module.register('MMM-MplayerRadio', {
       this.nextStationIndex = payload.nextStationIndex
       this.curStreamInfo = payload.curStreamInfo
       this.playing = true
-      this.updateDom()
+      this.updateDom(this.config.animationSpeed)
     } else if(notification === "RADIO_STOPPED"){
       this.curStationIndex = payload.curStationIndex
       this.previousStationIndex = payload.previousStationIndex
       this.nextStationIndex = payload.nextStationIndex
       this.curStreamInfo = payload.curStreamInfo
       this.playing = false
-      this.updateDom()
+      this.updateDom(this.config.animationSpeed)
     } else if(notification === "RADIO_CURRENT_STREAM_INFO"){
       this.curStationIndex = payload.curStationIndex
       this.previousStationIndex = payload.previousStationIndex
       this.nextStationIndex = payload.nextStationIndex
       this.curStreamInfo = payload.curStreamInfo
       this.playing = true
-      this.updateDom()
+      this.updateDom(this.config.animationSpeed)
     } else if(notification === "RADIO_UPDATE_AFTER_PROFILE_CHANGE"){
       this.curStationIndex = payload.curStationIndex
       this.previousStationIndex = payload.previousStationIndex
       this.nextStationIndex = payload.nextStationIndex
       this.curStreamInfo = payload.curStreamInfo
-      this.updateDom()
+      this.updateDom(this.config.animationSpeed)
     }
   },
 
