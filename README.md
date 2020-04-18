@@ -130,10 +130,3 @@ You can try it without an asound.conf. If you get no sound try adding this one a
 | RADIO_TOGGLE | | If the radio is currently playing it stops if it is stopped it plays the current seleced station |
 | RADIO_NEXT | | Switch to the next station |
 | RADIO_PREVIOUS | Switch to the previous station |
-
-    if((notification === "CHANG| D_PROFILE") ||
-       (notification === "RADIO_NEXT") ||
-       (notification === "RADIO_PREVIOUS") ||
-       (notification === "RADIO_PLAY") ||
-       (notification === "RADIO_STOP") ||
-       (notification === "RADIO_TOGGLE")   

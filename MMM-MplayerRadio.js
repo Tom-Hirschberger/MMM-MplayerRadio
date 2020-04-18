@@ -254,6 +254,7 @@ Module.register('MMM-MplayerRadio', {
       this.curStreamInfo = payload.curStreamInfo
       this.playing = true
       this.updateDom(this.config.animationSpeed)
+      this.sendNotification(notification,payload)
     } else if(notification === "RADIO_STOPPED"){
       this.curStationIndex = payload.curStationIndex
       this.previousStationIndex = payload.previousStationIndex
@@ -261,6 +262,7 @@ Module.register('MMM-MplayerRadio', {
       this.curStreamInfo = payload.curStreamInfo
       this.playing = false
       this.updateDom(this.config.animationSpeed)
+      this.sendNotification(notification,payload)
     } else if(notification === "RADIO_CURRENT_STREAM_INFO"){
       this.curStationIndex = payload.curStationIndex
       this.previousStationIndex = payload.previousStationIndex
