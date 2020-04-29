@@ -11,6 +11,9 @@ Hint: It may be possible to play any songs you like by creating an .m3u file of 
 ## Screenshots ##
 ### In Action ###
 ![alt text](https://github.com/Tom-Hirschberger/MMM-MplayerRadio/raw/master/examples/threeStationsOnePlaying.png "ThreeStations with one playing")
+
+![alt text](https://github.com/Tom-Hirschberger/MMM-MplayerRadio/raw/master/examples/threeStationsOnePlayingWithVolControl.png "ThreeStations with one playing and volume controls")
+
 ![alt text](https://github.com/Tom-Hirschberger/MMM-MplayerRadio/raw/master/examples/threeStationsStopped.png "ThreeStations with stopped state")
 ### After Startup ###
 ![alt text](https://github.com/Tom-Hirschberger/MMM-MplayerRadio/raw/master/examples/initialScreen.png "InitialScreen")
@@ -99,6 +102,7 @@ You can try it without an asound.conf. If you get no sound try adding this one a
 | ------- | --- | --- | --- |
 | stations | An array containing station opjects; Each one needs to have an title and an url; | Array | [] |
 | showControls | If you do not want the control bar (prev, play, stop, next) you can hide it by setting this value to false | boolean | true |
+| showVolControls | If you do not want the volume up/down buttons to be visible in the control bar you can hide them by setting this value to false | boolean | true |
 | showStations | If you do not want to see your stations but only the initial screen with the controls set this option to false | boolean | true |
 | missingLogoUrl | If you do not provide a logo for an station this one is used | String | "./MMM-MplayerRadio/radio-freepnglogos.png" |
 | displayStationsOnStartup | If you do not want to see the inital screen (screenshots) but the directly the stations set this option to true | boolean | false |
@@ -108,8 +112,11 @@ You can try it without an asound.conf. If you get no sound try adding this one a
 | nextIcon | This icon is used in the control section to switch to the next station. It is an iconify icon, too. | String | "ic-round-skip-next" |
 | stopIcon | This icon is used in the control section if the player is stopped. It is an iconify icon, too. | String | "ic-round-stop" |
 | playIcon | This icon is used in the control section if the player is currently playing. It is an iconify icon, too. | String | "ic-round-play-arrow" |
+| volDownIcon | This icon is used in the control section to decrease the volume. It is an iconify icon, too. | String | "bi-volume-down-fill" |
+| volUpIcon | This icon is used in the control section to increase the volume. It is an iconify icon, too. | String | "bi-volume-down-fill" |
 | mplayerPath | To path to the mplayer binary. If you do not know use the "which mplayer" command to find out | String | /usr/bin/mplayer |
 | mplayerCache | The mplayer (can) use an cache for web based stations | Integer | 512 |
+| animationSpeed | If the station changes or the stream info will be updated the change will be animated within this speed (ms) | Integer | 500 |
 
 ### Stations ###
 | Option  | Description | Mandatory |

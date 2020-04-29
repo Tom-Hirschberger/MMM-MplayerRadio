@@ -11,16 +11,12 @@ svg[data-icon="noto:radio"] {
     padding: 5px;
 }
 
-.mradio .previousWrapper {
+.mradio .previousWrapper, .mradio .nextWrapper {
     height: 51px;
 }
 
 .mradio .currentWrapper {
     height: 90px;
-}
-
-.mradio .nextWrapper {
-    height: 51px;
 }
 
 .mradio .streamInfoWrapper {
