@@ -9,6 +9,7 @@ Module.register('MMM-MplayerRadio', {
     mplayerCache: 512,
     changeStationOnProfileChange: true,
     showControls: true,
+    showVolControls: true,
     showStations: true,
     displayStationsOnStartup: false,
     missingLogoUrl: "./MMM-MplayerRadio/radio-freepnglogos.png",
@@ -17,6 +18,8 @@ Module.register('MMM-MplayerRadio', {
     playIcon: "ic-round-play-arrow",
     stopIcon: "ic-round-stop",
     nextIcon: "ic-round-skip-next",
+    volUpIcon: "bi-volume-up-fill",
+    volDownIcon: "bi-volume-down-fill",
     animationSpeed: 500
   },
 
@@ -179,6 +182,19 @@ Module.register('MMM-MplayerRadio', {
           controlInnerWrapper.className = "controlInnerWrapper"
           controlInnerWrapper.setAttribute("colspan", "2")
 
+        if(self.config.showVolControls){
+          const volDownButtonWrapper = document.createElement("span")
+            volDownButtonWrapper.className = "button volDownButtonWrapper"
+            volDownButtonWrapper.addEventListener("click", ()=>{self.sendNotification("VOLUME_DOWN")})
+
+            const volDownButton = document.createElement("span")
+              volDownButton.className = "button volDownButton iconify"
+              volDownButton.setAttribute("data-icon", this.config.volDownIcon)
+              volDownButton.setAttribute("data-inline", "false")
+            volDownButtonWrapper.appendChild(volDownButton)
+          controlInnerWrapper.appendChild(volDownButtonWrapper)
+        }
+
         const prevButtonWrapper = document.createElement("span")
           prevButtonWrapper.className = "button previousButtonWrapper"
           prevButtonWrapper.addEventListener("click", ()=>{self.sendSocketNotification("RADIO_PREVIOUS")})
@@ -225,6 +241,19 @@ Module.register('MMM-MplayerRadio', {
             nextButton.setAttribute("data-inline", "false")
           nextButtonWrapper.appendChild(nextButton)
         controlInnerWrapper.appendChild(nextButtonWrapper)
+
+        if(self.config.showVolControls){
+          const volUpButtonWrapper = document.createElement("span")
+            volUpButtonWrapper.className = "button volUpButtonWrapper"
+            volUpButtonWrapper.addEventListener("click", ()=>{self.sendNotification("VOLUME_UP")})
+
+            const volUpButton = document.createElement("span")
+              volUpButton.className = "button volUpButton iconify"
+              volUpButton.setAttribute("data-icon", this.config.volUpIcon)
+              volUpButton.setAttribute("data-inline", "false")
+            volUpButtonWrapper.appendChild(volUpButton)
+          controlInnerWrapper.appendChild(volUpButtonWrapper)
+        }
         
         controlWrapper.appendChild(controlInnerWrapper)
         innerWrapper.appendChild(controlWrapper)
