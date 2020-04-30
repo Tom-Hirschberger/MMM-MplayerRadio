@@ -63,7 +63,7 @@ module.exports = NodeHelper.create({
           nextStationIndex: self.getNextStationId(self.curStationIndex, -1),
           curStreamInfo: self.curStreamInfo
         })
-      }, 1500)
+      }, 700)
 
       self.curStationProcess.stdout.on("data", (data) =>{
         var dataString = data.toString()
