@@ -29,77 +29,89 @@ module.exports = NodeHelper.create({
       self.stopStation(false)
       self.curStationIndex = stationId
 
-      var mplayerCache = self.config.mplayerCache
-
-      if(self.config.stations[self.curStationIndex].mplayerCache){
-        mplayerCache = self.config.stations[self.curStationIndex].mplayerCache
-      }
-      self.curStationProcess = spawn(self.config.mplayerPath,
-            args = ["-playlist", self.config.stations[self.curStationIndex].url,
-                    "-msglevel", "all=4",
-                    "-cache", mplayerCache
-            ],
-            options = {
-                shell: false,
-                windowsHide: true
-              }
-            )
-
-      self.playing = true
-      self.curStationProcess.on("close", (err) =>{
-        if(err !== 1){
-          self.sendSocketNotification("RADIO_STOPPED", {
-            curStationIndex: self.curStationIndex,
-            previousStationIndex: self.getNextStationId(self.curStationIndex, 1),
-            nextStationIndex: self.getNextStationId(self.curStationIndex, -1)
-          })
+      if((self.config.customCommand) || (self.config.stations[self.curStationIndex].customCommand)){
+        let curCmd = self.config.customCommand
+        if(typeof self.config.stations[self.curStationIndex].customCommand !== "undefined"){
+          curCmd = self.config.stations[self.curStationIndex].customCommand
         }
-      })
+        let curArgs = []
+        let curConfigArgs = self.config.customCommandArgs
+        if(typeof self.config.stations[self.curStationIndex].customCommandArgs !== "undefined"){
+          curConfigArgs = self.config.stations[self.curStationIndex].customCommandArgs
+        }
 
-      let updateTimeout = setTimeout(()=>{
+        for(let curIdx = 0; curIdx < curConfigArgs.length; curIdx++){
+          console.log("Checking arg: "+curIdx+" "+curConfigArgs[curIdx])
+          if(curConfigArgs[curIdx] === "###URL###"){
+            curArgs[curIdx] = self.config.stations[self.curStationIndex].url
+          } else {
+            curArgs[curIdx] = curConfigArgs[curIdx]
+          }
+        }
+        
+        console.log("Running "+curCmd+ "with args: "+JSON.stringify(curArgs))
+
+        self.curStationProcess = spawn(curCmd,
+          args = curArgs,
+          options = {
+              shell: false,
+              windowsHide: true
+            }
+          )
+
+        self.playing = true
+
         self.sendSocketNotification("RADIO_PLAYING",{
           curStationIndex: self.curStationIndex,
           previousStationIndex: self.getNextStationId(self.curStationIndex, 1),
           nextStationIndex: self.getNextStationId(self.curStationIndex, -1),
           curStreamInfo: self.curStreamInfo
         })
-      }, 700)
+      } else {
+        var mplayerCache = self.config.mplayerCache
 
-      self.curStationProcess.stdout.on("data", (data) =>{
-        var dataString = data.toString()
-        if(self.inStreamInfo){
-          if(data.indexOf("'") > -1){
-            if(updateTimeout){
-              clearTimeout(updateTimeout)
-            }
-            self.curStreamInfo += data.substring(0, data.indexOf("'"))
-            self.sendSocketNotification("RADIO_CURRENT_STREAM_INFO", {
+        if(self.config.stations[self.curStationIndex].mplayerCache){
+          mplayerCache = self.config.stations[self.curStationIndex].mplayerCache
+        }
+        self.curStationProcess = spawn(self.config.mplayerPath,
+              args = ["-playlist", self.config.stations[self.curStationIndex].url,
+                      "-msglevel", "all=4",
+                      "-cache", mplayerCache
+              ],
+              options = {
+                  shell: false,
+                  windowsHide: true
+                }
+              )
+
+        self.playing = true
+        self.curStationProcess.on("close", (err) =>{
+          if(err !== 1){
+            self.sendSocketNotification("RADIO_STOPPED", {
               curStationIndex: self.curStationIndex,
               previousStationIndex: self.getNextStationId(self.curStationIndex, 1),
-              nextStationIndex: self.getNextStationId(self.curStationIndex, -1),
-              curStreamInfo: self.curStreamInfo
-            })
-          } else {
-            self.curStreamInfo = "&nbsp;"
-            self.inStreamInfo = false
-            if(updateTimeout){
-              clearTimeout(updateTimeout)
-            }
-            self.sendSocketNotification("RADIO_CURRENT_STREAM_INFO", {
-              curStationIndex: self.curStationIndex,
-              previousStationIndex: self.getNextStationId(self.curStationIndex, 1),
-              nextStationIndex: self.getNextStationId(self.curStationIndex, -1),
-              curStreamInfo: self.curStreamInfo
+              nextStationIndex: self.getNextStationId(self.curStationIndex, -1)
             })
           }
-        } else {
-          if(dataString.indexOf("StreamTitle='") > -1){
-            self.curStreamInfo = dataString.substring(dataString.indexOf("StreamTitle='")+13)
-            if(self.curStreamInfo.indexOf("'") > -1){
+        })
+
+        let updateTimeout = setTimeout(()=>{
+          self.sendSocketNotification("RADIO_PLAYING",{
+            curStationIndex: self.curStationIndex,
+            previousStationIndex: self.getNextStationId(self.curStationIndex, 1),
+            nextStationIndex: self.getNextStationId(self.curStationIndex, -1),
+            curStreamInfo: self.curStreamInfo
+          })
+        }, 700)
+
+        self.curStationProcess.stdout.on("data", (data) =>{
+          var dataString = data.toString()
+          if(self.inStreamInfo){
+            if(data.indexOf("'") > -1){
               if(updateTimeout){
                 clearTimeout(updateTimeout)
               }
-              self.curStreamInfo = self.curStreamInfo.substring(0, self.curStreamInfo.indexOf("'"))
+              self.curStreamInfo += data.substring(0, data.indexOf("'"))
               self.sendSocketNotification("RADIO_CURRENT_STREAM_INFO", {
                 curStationIndex: self.curStationIndex,
                 previousStationIndex: self.getNextStationId(self.curStationIndex, 1),
@@ -107,11 +119,39 @@ module.exports = NodeHelper.create({
                 curStreamInfo: self.curStreamInfo
               })
             } else {
-              self.inStreamInfo = true
+              self.curStreamInfo = "&nbsp;"
+              self.inStreamInfo = false
+              if(updateTimeout){
+                clearTimeout(updateTimeout)
+              }
+              self.sendSocketNotification("RADIO_CURRENT_STREAM_INFO", {
+                curStationIndex: self.curStationIndex,
+                previousStationIndex: self.getNextStationId(self.curStationIndex, 1),
+                nextStationIndex: self.getNextStationId(self.curStationIndex, -1),
+                curStreamInfo: self.curStreamInfo
+              })
+            }
+          } else {
+            if(dataString.indexOf("StreamTitle='") > -1){
+              self.curStreamInfo = dataString.substring(dataString.indexOf("StreamTitle='")+13)
+              if(self.curStreamInfo.indexOf("'") > -1){
+                if(updateTimeout){
+                  clearTimeout(updateTimeout)
+                }
+                self.curStreamInfo = self.curStreamInfo.substring(0, self.curStreamInfo.indexOf("'"))
+                self.sendSocketNotification("RADIO_CURRENT_STREAM_INFO", {
+                  curStationIndex: self.curStationIndex,
+                  previousStationIndex: self.getNextStationId(self.curStationIndex, 1),
+                  nextStationIndex: self.getNextStationId(self.curStationIndex, -1),
+                  curStreamInfo: self.curStreamInfo
+                })
+              } else {
+                self.inStreamInfo = true
+              }
             }
           }
-        }
-      })
+        })
+      }
     } else {
       self.stopStation(true)
     }

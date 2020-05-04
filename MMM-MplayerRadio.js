@@ -20,7 +20,9 @@ Module.register('MMM-MplayerRadio', {
     nextIcon: "ic-round-skip-next",
     volUpIcon: "bi-volume-up-fill",
     volDownIcon: "bi-volume-down-fill",
-    animationSpeed: 500
+    animationSpeed: 500,
+    customCommand: null,
+    customCommandArgs: []
   },
 
   /**
