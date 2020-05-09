@@ -97,6 +97,9 @@ You can try it without an asound.conf. If you get no sound try adding this one a
 		},
 ```
 
+### XMMS2 ###
+If you prefere xmms2 to play the radio streams instead of mplayer you will find an custom script "playRadio.bash" in the scripts folder. There is a example config in the examples directory, too.
+
 ### General ###
 | Option  | Description | Type | Default |
 | ------- | --- | --- | --- |
