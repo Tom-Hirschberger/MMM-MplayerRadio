@@ -69,6 +69,7 @@ You can try it without an asound.conf. If you get no sound try adding this one a
 			header: "Radio",
 			position: "top_center",
 			config: {
+				//autoplay: 0,
 				stations: [
 					{
 						title: "Antenne.de",
@@ -103,6 +104,7 @@ If you prefere xmms2 to play the radio streams instead of mplayer you will find 
 ### General ###
 | Option  | Description | Type | Default |
 | ------- | --- | --- | --- |
+| autoplay | If you like to play a station automatically after the module starts simply specify its index (starting with 0) here | Integer | null |
 | stations | An array containing station opjects; Each one needs to have an title and an url; | Array | [] |
 | showControls | If you do not want the control bar (prev, play, stop, next) you can hide it by setting this value to false | boolean | true |
 | showVolControls | If you do not want the volume up/down buttons to be visible in the control bar you can hide them by setting this value to false | boolean | true |
