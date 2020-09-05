@@ -20,7 +20,10 @@ Module.register('MMM-MplayerRadio', {
     nextIcon: "ic-round-skip-next",
     volUpIcon: "bi-volume-up-fill",
     volDownIcon: "bi-volume-down-fill",
-    animationSpeed: 500
+    animationSpeed: 500,
+    customCommand: null,
+    customCommandArgs: [],
+    autoplay: null,
   },
 
   /**
@@ -38,6 +41,7 @@ Module.register('MMM-MplayerRadio', {
    * Pseudo-constructor for our module. Sets the default current page to 0.
    */
   start() {
+    const self = this
     Log.info("Starting module: " + this.name);
     this.sendSocketNotification('CONFIG', this.config);
     this.curStationIndex = null;
@@ -48,6 +52,12 @@ Module.register('MMM-MplayerRadio', {
 
     if(this.config.displayStationsOnStartup){
       this.sendSocketNotification("RADIO_INIT")
+    }
+
+    if(self.config.autoplay !== null){
+      setTimeout(()=>{
+        self.sendSocketNotification("RADIO_PLAY",{id: self.config.autoplay})
+      }, 1000)
     }
   },
 

@@ -69,6 +69,7 @@ You can try it without an asound.conf. If you get no sound try adding this one a
 			header: "Radio",
 			position: "top_center",
 			config: {
+				//autoplay: 0,
 				stations: [
 					{
 						title: "Antenne.de",
@@ -97,9 +98,13 @@ You can try it without an asound.conf. If you get no sound try adding this one a
 		},
 ```
 
+### XMMS2 ###
+If you prefere xmms2 to play the radio streams instead of mplayer you will find an custom script "playRadio.bash" in the scripts folder. There is a example config in the examples directory, too.
+
 ### General ###
 | Option  | Description | Type | Default |
 | ------- | --- | --- | --- |
+| autoplay | If you like to play a station automatically after the module starts simply specify its index (starting with 0) here | Integer | null |
 | stations | An array containing station opjects; Each one needs to have an title and an url; | Array | [] |
 | showControls | If you do not want the control bar (prev, play, stop, next) you can hide it by setting this value to false | boolean | true |
 | showVolControls | If you do not want the volume up/down buttons to be visible in the control bar you can hide them by setting this value to false | boolean | true |
@@ -117,6 +122,8 @@ You can try it without an asound.conf. If you get no sound try adding this one a
 | mplayerPath | To path to the mplayer binary. If you do not know use the "which mplayer" command to find out | String | /usr/bin/mplayer |
 | mplayerCache | The mplayer (can) use an cache for web based stations | Integer | 512 |
 | animationSpeed | If the station changes or the stream info will be updated the change will be animated within this speed (ms) | Integer | 500 |
+| customCommand | If you do not want to use mplayer you can run any other script you like. Only condition is that the scripts needs to run as long as the station is active | String | null |
+| customCommandArgs | You can pass as many arguments to the customCommand as you like. "###URL###" will be replaced with the url of the station | Array | [] |
 
 ### Stations ###
 | Option  | Description | Mandatory |
@@ -126,6 +133,8 @@ You can try it without an asound.conf. If you get no sound try adding this one a
 | logo | The url of the logo which should be displayed for this station. If you want to use an local one use an url like "./MMM-MplayerRadio/YOUR_LOGO_FILE". If no logo is specified the configured default logo is used instead | false |
 | mplayerCache | If you like you can provide an different cache size for specific stations. i.e. because the stream is very slow or buggy | false |
 | profiles | If you want this station only be visible/playable in specific profiles add the profiles to this string (i.e. "pageOne pageTwo"). If the string is missing/not set the station can be used in every profile | false |
+| customCommand | If you like to run an different command special for this station you can pass it with this variable. The only condition is that the command needs to run as long as the station is active. | false |
+| customCommandArgs | If you use the customCommand for this station you can pass as many argument to it as you like in this array. "###URL###" will be replaced with the url of the station | false |
 
 
 ## Supported Notifications ##
