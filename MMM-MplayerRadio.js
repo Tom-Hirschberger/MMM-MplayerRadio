@@ -165,11 +165,12 @@ Module.register('MMM-MplayerRadio', {
         const streamInfoWrapper = document.createElement("tr")
           streamInfoWrapper.className = "streamInfoWrapper"
         if(this.curStreamInfo != null ){
-          const streamInfo = document.createElement("td")
+          let streamInfo = document.createElement("td")
             streamInfo.setAttribute("colspan", "2")
             streamInfo.className = "streamInfo"
             streamInfo.innerHTML = this.curStreamInfo
           streamInfoWrapper.appendChild(streamInfo)
+          self.streamInfoObj = streamInfo
         }
         innerWrapper.appendChild(streamInfoWrapper)
     } else {
@@ -308,7 +309,8 @@ Module.register('MMM-MplayerRadio', {
       this.nextStationIndex = payload.nextStationIndex
       this.curStreamInfo = payload.curStreamInfo
       this.playing = true
-      this.updateDom(this.config.animationSpeed)
+      //this.updateDom(this.config.animationSpeed)
+      this.streamInfoObj.innerHTML = this.curStreamInfo
     } else if(notification === "RADIO_UPDATE_AFTER_PROFILE_CHANGE"){
       this.curStationIndex = payload.curStationIndex
       this.previousStationIndex = payload.previousStationIndex
