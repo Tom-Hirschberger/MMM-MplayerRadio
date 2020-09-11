@@ -95,22 +95,17 @@ module.exports = NodeHelper.create({
           }
         })
 
-        let updateTimeout = setTimeout(()=>{
-          self.sendSocketNotification("RADIO_PLAYING",{
-            curStationIndex: self.curStationIndex,
-            previousStationIndex: self.getNextStationId(self.curStationIndex, 1),
-            nextStationIndex: self.getNextStationId(self.curStationIndex, -1),
-            curStreamInfo: self.curStreamInfo
-          })
-        }, 700)
+        self.sendSocketNotification("RADIO_PLAYING",{
+          curStationIndex: self.curStationIndex,
+          previousStationIndex: self.getNextStationId(self.curStationIndex, 1),
+          nextStationIndex: self.getNextStationId(self.curStationIndex, -1),
+          curStreamInfo: self.curStreamInfo
+        })
 
         self.curStationProcess.stdout.on("data", (data) =>{
           var dataString = data.toString()
           if(self.inStreamInfo){
             if(data.indexOf("'") > -1){
-              if(updateTimeout){
-                clearTimeout(updateTimeout)
-              }
               self.curStreamInfo += data.substring(0, data.indexOf("'"))
               self.sendSocketNotification("RADIO_CURRENT_STREAM_INFO", {
                 curStationIndex: self.curStationIndex,
@@ -121,9 +116,6 @@ module.exports = NodeHelper.create({
             } else {
               self.curStreamInfo = "&nbsp;"
               self.inStreamInfo = false
-              if(updateTimeout){
-                clearTimeout(updateTimeout)
-              }
               self.sendSocketNotification("RADIO_CURRENT_STREAM_INFO", {
                 curStationIndex: self.curStationIndex,
                 previousStationIndex: self.getNextStationId(self.curStationIndex, 1),
@@ -135,9 +127,6 @@ module.exports = NodeHelper.create({
             if(dataString.indexOf("StreamTitle='") > -1){
               self.curStreamInfo = dataString.substring(dataString.indexOf("StreamTitle='")+13)
               if(self.curStreamInfo.indexOf("'") > -1){
-                if(updateTimeout){
-                  clearTimeout(updateTimeout)
-                }
                 self.curStreamInfo = self.curStreamInfo.substring(0, self.curStreamInfo.indexOf("'"))
                 self.sendSocketNotification("RADIO_CURRENT_STREAM_INFO", {
                   curStationIndex: self.curStationIndex,

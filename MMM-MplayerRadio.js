@@ -49,6 +49,7 @@ Module.register('MMM-MplayerRadio', {
     this.nextStationIndex = null;
     this.playing = false;
     this.curStreamInfo = null;
+    this.streamInfoObj = null;
 
     if(this.config.displayStationsOnStartup){
       this.sendSocketNotification("RADIO_INIT")
@@ -310,7 +311,10 @@ Module.register('MMM-MplayerRadio', {
       this.curStreamInfo = payload.curStreamInfo
       this.playing = true
       //this.updateDom(this.config.animationSpeed)
-      this.streamInfoObj.innerHTML = this.curStreamInfo
+      if (this.streamInfoObj !== null){
+        this.streamInfoObj.innerHTML = this.curStreamInfo
+      }
+      
     } else if(notification === "RADIO_UPDATE_AFTER_PROFILE_CHANGE"){
       this.curStationIndex = payload.curStationIndex
       this.previousStationIndex = payload.previousStationIndex
