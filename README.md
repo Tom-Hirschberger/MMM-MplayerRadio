@@ -125,6 +125,8 @@ If you prefere xmms2 to play the radio streams instead of mplayer you will find 
 | customCommand | If you do not want to use mplayer you can run any other script you like. Only condition is that the scripts needs to run as long as the station is active | String | null |
 | customCommandArgs | You can pass as many arguments to the customCommand as you like. "###URL###" will be replaced with the url of the station | Array | [] |
 
+The custom commands either can be configured in the global module configuration and then will be used for all stations or it can be configured for each station individually!
+
 ### Stations ###
 | Option  | Description | Mandatory |
 | ------- | --- | --- |
