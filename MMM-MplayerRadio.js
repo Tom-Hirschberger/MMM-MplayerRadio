@@ -15,6 +15,7 @@ Module.register('MMM-MplayerRadio', {
     showLogos: true,
     showTitles: true,
     showScrollbar: false,
+    scrollToActiveStation: true,
     displayStationsOnStartup: false,
     missingLogoUrl: "./MMM-MplayerRadio/radio-freepnglogos.png",
     previousIcon: "ic-round-skip-previous",
@@ -312,7 +313,7 @@ Module.register('MMM-MplayerRadio', {
 
         self.updateDom(this.config.animationSpeed)
 
-        if(self.activeStation != null){
+        if(self.config.scrollToActiveStation && (self.activeStation != null)){
           setTimeout(()=>{
             self.activeStation.parentNode.scrollTop = self.activeStation.offsetTop - self.activeStation.parentNode.offsetTop
           }, 1000)
@@ -342,7 +343,7 @@ Module.register('MMM-MplayerRadio', {
       this.curStreamInfo = payload.curStreamInfo
       this.playing = true
       this.updateDom(this.config.animationSpeed)
-      if(self.activeStation != null){
+      if(self.config.scrollToActiveStation && (self.activeStation != null)){
         setTimeout(()=>{
           self.activeStation.parentNode.scrollTop = self.activeStation.offsetTop - self.activeStation.parentNode.offsetTop
         }, 1000)
