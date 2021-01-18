@@ -370,10 +370,6 @@ Module.register('MMM-MplayerRadio', {
         this.streamInfoObj.innerHTML = this.curStreamInfo
       }
       
-    } else if(notification === "RADIO_UPDATE_AFTER_PROFILE_CHANGE"){
-      this.curStationIndex = payload.curStationIndex
-      this.curStreamInfo = payload.curStreamInfo
-      this.updateDom(this.config.animationSpeed)
     }
   },
 
