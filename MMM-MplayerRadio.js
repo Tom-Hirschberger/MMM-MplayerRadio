@@ -5,7 +5,6 @@ Module.register('MMM-MplayerRadio', {
    * implementation. This means 3 pages, and some default enabled styles.
    */
   defaults: {
-    instance: 0,
     mplayerPath: "/usr/bin/mplayer",
     mplayerCache: 512,
     changeStationOnProfileChange: true,
@@ -60,7 +59,7 @@ Module.register('MMM-MplayerRadio', {
     self.currentProfile = ''
     self.currentProfilePattern = new RegExp('.*')
 
-    self.instanceCssClass = "mradio mradio-"+self.config.instance
+    self.instanceCssClass = "mradio"
 
     if(self.config.autoplay !== null){
       self.curStationIndex = self.config.autoplay
