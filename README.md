@@ -1,6 +1,6 @@
 
 # MMM-MplayerRadio #
-This module plays .m3u playlists with the system mplayer instance. Multiple stations are supported and can be switched either by notification or touch control. The privious and next station will be displayed and also the currently playing. If the radio station provides stream info (current song, studio hotline, etc.) the information will be displayed, too.
+This module plays .m3u playlists with the system mplayer instance. Multiple stations are supported and can be switched either by notification or touch control. The currently played station is highlighted. If the radio station provides stream info (current song, studio hotline, etc.) the information will be displayed, too.
 Different stations can be used in different profiles (profile string in configuration).
 
 **If you want to use the volume buttons please make sure to install the https://github.com/Anonym-tsk/MMM-Volume module.**
@@ -12,14 +12,9 @@ Hint: It may be possible to play any songs you like by creating an .m3u file of 
 
 ## Screenshots ##
 ### In Action ###
-![alt text](https://github.com/Tom-Hirschberger/MMM-MplayerRadio/raw/master/examples/threeStationsOnePlaying.png "ThreeStations with one playing")
-
-![alt text](https://github.com/Tom-Hirschberger/MMM-MplayerRadio/raw/master/examples/threeStationsOnePlayingWithVolControl.png "ThreeStations with one playing and volume controls")
+![alt text](https://github.com/Tom-Hirschberger/MMM-MplayerRadio/raw/master/examples/threeStationsOnePlaying.png "ThreeStations with one playing and volume controls")
 
 ![alt text](https://github.com/Tom-Hirschberger/MMM-MplayerRadio/raw/master/examples/threeStationsStopped.png "ThreeStations with stopped state")
-### After Startup ###
-![alt text](https://github.com/Tom-Hirschberger/MMM-MplayerRadio/raw/master/examples/initialScreen.png "InitialScreen")
-
 
 ## Installation
 
@@ -95,7 +90,6 @@ You can try it without an asound.conf. If you get no sound try adding this one a
 						logo: "https://upload.wikimedia.org/wikipedia/commons/7/78/Radio_Gong_96.3_Logo.png",
 					}
 				],
-				displayStationsOnStartup: true
 			},
 		},
 ```

@@ -80,7 +80,12 @@ Module.register('MMM-MplayerRadio', {
       })})
       if(self.curStationIndex === curId){
         self.activeStation = stationWrapper
-        stationWrapper.className = "station selected"
+        if(self.playing){
+          stationWrapper.className = "station selected playing"
+        } else {
+          stationWrapper.className = "station selected stopped"
+        }
+        
       } else {
         stationWrapper.className = "station unselected"
       }

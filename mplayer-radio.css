@@ -40,7 +40,16 @@
 }
 
 .mradio .station.selected .innerWrapper {
+    border-radius: 5px;
+}
+
+.mradio .station.selected.playing .innerWrapper {
     background-color: #425a85;
+    border-radius: 5px;
+}
+
+.mradio .station.selected.stopped .innerWrapper {
+    background-color: #302f2d;
     border-radius: 5px;
 }
 
