@@ -14,7 +14,7 @@ Module.register('MMM-MplayerRadio', {
     showStations: true,
     showLogos: true,
     showTitles: true,
-    showScrollbar: false,
+    scrollableStations: false,
     scrollToActiveStation: true,
     missingLogoUrl: "./MMM-MplayerRadio/radio-freepnglogos.png",
     previousIcon: "ic-round-skip-previous",
@@ -33,7 +33,7 @@ Module.register('MMM-MplayerRadio', {
    * Apply any styles, if we have any.
    */
   getStyles() {
-    if (this.config.showScrollbar){
+    if (this.config.scrollableStations){
       return ['mplayer-radio.css', 'mplayer-radio-scroll.css'];
     } else {
       return ['mplayer-radio.css'];

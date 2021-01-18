@@ -108,9 +108,14 @@ If you prefere xmms2 to play the radio streams instead of mplayer you will find 
 | ------- | --- | --- | --- |
 | autoplay | If you like to play a station automatically after the module starts simply specify its index (starting with 0) here | Integer | null |
 | stations | An array containing station opjects; Each one needs to have an title and an url; | Array | [] |
+| showStations | If you do not want to see your stations but only the initial screen with the controls set this option to false | boolean | true |
+| showStreamInfo | If you do not want to see the information about the current running stream (if provided) you can change this option to false | boolean | true |
 | showControls | If you do not want the control bar (prev, play, stop, next) you can hide it by setting this value to false | boolean | true |
 | showVolControls | If you do not want the volume up/down buttons to be visible in the control bar you can hide them by setting this value to false | boolean | true |
-| showStations | If you do not want to see your stations but only the initial screen with the controls set this option to false | boolean | true |
+| showLogos | Should the logos of the stations be displayed? | boolean | true |
+| showTitles | Should the titles of the stations be displayed? | boolean | true |
+| scrollableStations | Should the list of stations be scrollable | boolean | false |
+| scrollToActiveStation | Should the position of the station list be adjusted to be the current active station be the first element after a station change | true |
 | missingLogoUrl | If you do not provide a logo for an station this one is used | String | "./MMM-MplayerRadio/radio-freepnglogos.png" |
 | changeStationOnProfileChange | Should the station be changed if the profile changes and this station is not suitable for the new profile | boolean | true |
 | noInfoIcon | This icon will displayed in the inital screen and if you change to a profile that has no sations assosiated. You can use any iconify icon. | String | "noto:radio" |
