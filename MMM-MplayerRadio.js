@@ -363,6 +363,12 @@ Module.register('MMM-MplayerRadio', {
       this.curStreamInfo = payload.curStreamInfo
       this.playing = false
       this.updateDom(this.config.animationSpeed)
+      if(self.config.scrollToActiveStation && (self.activeStation != null)){
+        setTimeout(()=>{
+          self.activeStation.parentNode.scrollTop = self.activeStation.offsetTop - self.activeStation.parentNode.offsetTop
+        }, 1000)
+      }
+      
       this.sendNotification(notification,payload)
     } else if(notification === "RADIO_CURRENT_STREAM_INFO"){
       console.log("Updating Stream Info")
