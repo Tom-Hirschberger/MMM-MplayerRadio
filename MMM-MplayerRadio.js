@@ -51,6 +51,15 @@ Module.register('MMM-MplayerRadio', {
   start() {
     const self = this
     Log.info("Starting module: " + self.name);
+    for (let i = 0; i < self.config.stations.length; i++){
+      if (typeof self.config.stations[i].title === "undefined"){
+        let title = self.config.stations[i].url
+        title = title.substring(title.lastIndexOf("/")+1)
+        title = title.substring(0,title.lastIndexOf("."))
+        self.config.stations[i].title = title
+      }
+    }
+
     self.sendSocketNotification('CONFIG', self.config);
     self.playing = false;
     self.activeStation = null;
