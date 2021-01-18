@@ -1,22 +1,78 @@
-svg[data-icon="noto:radio"] {
-    font-size: 140px;
+.mradio.wrapper {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    font-size: 0px;
+    line-height: 0px;
 }
 
-.mradio {
-    min-width: 400px;
-    font-size: 16px;
-    font-weight: normal;
-    /* background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.33, rgb(35, 56, 56)), color-stop(0.67, rgb(53, 80, 80))); */
-    /* background-image: -moz-linear-gradient(center bottom, rgb(35, 56, 56) 33%, rgb(53, 80, 80) 67% ); */
-    padding: 5px;
+.mradio .stationsWrapper {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    font-size: 0px;
+    line-height: 0px;
+    width: 100%;
+    height: 240px;
+    overflow: hidden;
 }
 
-.mradio .previousWrapper, .mradio .nextWrapper {
-    height: 51px;
+.mradio .station {
+    width: 100%;
+    height: 45px;
+    max-height: 45px;
+    margin-top: 10px;
 }
 
-.mradio .currentWrapper {
-    height: 90px;
+.mradio .station.selected {
+    height: 120px;
+    max-height: 120px;
+}
+
+.mradio .station .innerWrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.mradio .station.selected .innerWrapper {
+    background-color: #425a85;
+    border-radius: 5px;
+}
+
+.mradio .station .innerWrapper .titleWrapper{
+    margin-left: 20px;
+}
+
+.mradio .station .logoWrapper {
+    width: 150px;
+    text-align: center;
+    max-height: 45px;
+    margin-left: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.mradio .station.selected .logoWrapper {
+    max-height: 120px;
+}
+
+.mradio .station .logo {
+    max-width: 150px;
+    max-height: 35px;
+    border-radius: 5px;
+}
+
+.mradio .station.selected .logo {
+    max-height: 110px;
+}
+
+.mradio .station .titleWrapper {
+    font-size: 26px;
 }
 
 .mradio .streamInfoWrapper {
@@ -27,73 +83,6 @@ svg[data-icon="noto:radio"] {
 .mradio .controlWrapper {
     padding-top: 5px;
     width: 100%;
-}
-
-.mradio .logoWrapper {
-    width: 250px;
-    text-align: center;
-    margin: 10px;
-}
-
-.mradio .previousWrapper .logo {
-    margin-bottom: 5px;
-    max-height: 35px;
-    vertical-align: middle;
-}
-
-.mradio .currentWrapper .logo {
-    max-height: 70px;
-    vertical-align: middle;
-}
-
-.mradio .nextWrapper .logo {
-    max-height: 35px;
-    vertical-align: middle;
-}
-
-.mradio .titleWrapper {
-    margin: 10px;
-    width: 150px;
-    text-align: left;
-    vertical-align: middle;
-}
-
-.mradio .currentWrapper .title {
-    font-size: 20px;
-}
-
-.mradio .currentWrapper .logoWrapper {
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
-}
-
-.mradio .currentWrapper.playing .logoWrapper{
-    background-color:#425a85;
-}
-
-.mradio .currentWrapper.stopped .logoWrapper{
-    background-color:#302f2d;
-}
-
-.mradio .currentWrapper .titleWrapper {
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
-    font-weight: bold;
-}
-
-.mradio .currentWrapper.playing .titleWrapper {
-    font-style: italic;
-    background-color:#425a85;
-}
-
-.mradio .currentWrapper.stopped .titleWrapper {
-    font-style: normal;
-    background-color:#302f2d;
-}
-
-.mradio .controlInnerWrapper {
-    width: 100%;
-    text-align: center;
 }
 
 .mradio .controlWrapper .button {

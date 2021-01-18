@@ -5,15 +5,18 @@ Module.register('MMM-MplayerRadio', {
    * implementation. This means 3 pages, and some default enabled styles.
    */
   defaults: {
+    instance: 0,
     mplayerPath: "/usr/bin/mplayer",
     mplayerCache: 512,
     changeStationOnProfileChange: true,
     showControls: true,
     showVolControls: true,
     showStations: true,
+    showLogos: true,
+    showTitles: true,
+    showScrollbar: false,
     displayStationsOnStartup: false,
     missingLogoUrl: "./MMM-MplayerRadio/radio-freepnglogos.png",
-    noInfoIcon: "noto:radio",
     previousIcon: "ic-round-skip-previous",
     playIcon: "ic-round-play-arrow",
     stopIcon: "ic-round-stop",
@@ -30,7 +33,12 @@ Module.register('MMM-MplayerRadio', {
    * Apply any styles, if we have any.
    */
   getStyles() {
-    return ['mplayer-radio.css'];
+    if (this.config.showScrollbar){
+      return ['mplayer-radio.css', 'mplayer-radio-scroll.css'];
+    } else {
+      return ['mplayer-radio.css'];
+    }
+    
   },
 
   getScripts: function() {
@@ -42,24 +50,158 @@ Module.register('MMM-MplayerRadio', {
    */
   start() {
     const self = this
-    Log.info("Starting module: " + this.name);
-    this.sendSocketNotification('CONFIG', this.config);
-    this.curStationIndex = null;
-    this.previousStationIndex = null;
-    this.nextStationIndex = null;
-    this.playing = false;
-    this.curStreamInfo = null;
-    this.streamInfoObj = null;
+    Log.info("Starting module: " + self.name);
+    self.sendSocketNotification('CONFIG', self.config);
+    self.playing = false;
+    self.activeStation = null;
+    self.curStreamInfo = null;
+    self.streamInfoObj = null;
+    self.currentProfile = ''
+    self.currentProfilePattern = new RegExp('.*')
 
-    if(this.config.displayStationsOnStartup){
-      this.sendSocketNotification("RADIO_INIT")
-    }
+    self.instanceCssClass = "mradio mradio-"+self.config.instance
 
     if(self.config.autoplay !== null){
+      self.curStationIndex = self.config.autoplay
       setTimeout(()=>{
         self.sendSocketNotification("RADIO_PLAY",{id: self.config.autoplay})
       }, 1000)
+    } else {
+      self.curStationIndex = 0
     }
+  },
+
+  getStationDomObject: function(id){
+    const self = this
+    let curId = id
+    let stationWrapper = document.createElement("div")
+      stationWrapper.addEventListener("click", ()=>{self.sendSocketNotification("RADIO_PLAY", {
+        id: curId
+      })})
+      if(self.curStationIndex === curId){
+        self.activeStation = stationWrapper
+        stationWrapper.className = "station selected"
+      } else {
+        stationWrapper.className = "station unselected"
+      }
+      
+      let stationInnerWrapper = document.createElement("div")
+        stationInnerWrapper.className = "innerWrapper"
+        if(self.config.showLogos){
+          let stationLogoWrapper = document.createElement("div")
+            stationLogoWrapper.className = "logoWrapper"
+            let stationLogo = document.createElement("img")
+              stationLogo.className = "logo"
+              if(typeof self.config.stations[curId].logo !== "undefined"){
+                stationLogo.src = self.config.stations[curId].logo
+              } else {
+                stationLogo.src = self.config.missingLogoUrl
+              }
+            stationLogoWrapper.appendChild(stationLogo)
+          stationInnerWrapper.appendChild(stationLogoWrapper)
+        }
+
+        if (self.config.showTitles){
+          let stationTitleWrapper = document.createElement("div")
+            stationTitleWrapper.className = "titleWrapper"
+            stationTitleWrapper.innerHTML = self.config.stations[curId].title
+          stationInnerWrapper.appendChild(stationTitleWrapper)
+        }
+        
+      stationWrapper.appendChild(stationInnerWrapper)
+    return stationWrapper
+  },
+
+  getStreamInfoDom(){
+    const self = this
+    let streamInfoWrapper = document.createElement("div")
+      streamInfoWrapper.className = "streamInfoWrapper"
+
+      if (self.curStreamInfo != null){
+        streamInfoWrapper.innerHTML = self.curStreamInfo
+      }
+    return streamInfoWrapper
+  },
+
+  getControlDom(){
+    const self = this
+    let controlWrapper = document.createElement("div")
+      controlWrapper.className = "controlWrapper"
+
+      if (self.config.showVolControls == true){
+        let volDownButtonWrapper = document.createElement("span")
+          volDownButtonWrapper.className = "volDownButtonWrapper"
+          volDownButtonWrapper.addEventListener("click", ()=>{self.sendNotification("VOLUME_DOWN")})
+          let volDownButton = document.createElement("span")
+            volDownButton.className = "button volDownButton iconify"
+            volDownButton.setAttribute("data-icon", self.config.volDownIcon)
+            volDownButton.setAttribute("data-inline", "false")
+          volDownButtonWrapper.appendChild(volDownButton)
+        controlWrapper.appendChild(volDownButtonWrapper)
+      }
+      let prevButtonWrapper = document.createElement("span")
+        prevButtonWrapper.className = "previousButtonWrapper"
+        prevButtonWrapper.addEventListener("click", ()=>{
+          self.sendSocketNotification("RADIO_PLAY", {
+            id: self.getNextStationId(self.curStationIndex, 1),
+          })
+        })
+        let prevButton = document.createElement("span")
+          prevButton.className = "button previousButton iconify"
+          prevButton.setAttribute("data-icon", self.config.previousIcon)
+          prevButton.setAttribute("data-inline", "false")
+        prevButtonWrapper.appendChild(prevButton)
+      controlWrapper.appendChild(prevButtonWrapper)
+
+      if(this.playing){
+        let stopButtonWrapper = document.createElement("span")
+          stopButtonWrapper.className = "stopButtonWrapper"
+          stopButtonWrapper.addEventListener("click", ()=>{self.sendSocketNotification("RADIO_STOP")})
+          let stopButton = document.createElement("span")
+            stopButton.className = "button stopButton iconify"
+            stopButton.setAttribute("data-icon", this.config.stopIcon)
+            stopButton.setAttribute("data-inline", "false")
+          stopButtonWrapper.appendChild(stopButton)
+        controlWrapper.appendChild(stopButtonWrapper)
+      } else {
+        let playButtonWrapper = document.createElement("span")
+          playButtonWrapper.className = "playButtonWrapper"
+          playButtonWrapper.addEventListener("click", ()=>{self.sendSocketNotification("RADIO_PLAY")})
+          let playButton = document.createElement("span")
+            playButton.className = "button playButton iconify"
+            playButton.setAttribute("data-icon", this.config.playIcon)
+            playButton.setAttribute("data-inline", "false")
+          playButtonWrapper.appendChild(playButton)
+        controlWrapper.appendChild(playButtonWrapper)
+      }
+
+      let nextButtonWrapper = document.createElement("span")
+        nextButtonWrapper.className = "nextButtonWrapper"
+        nextButtonWrapper.addEventListener("click", ()=>{
+          self.sendSocketNotification("RADIO_PLAY", {
+            id: self.getNextStationId(self.curStationIndex, -1),
+          })
+        })
+        let nextButton = document.createElement("span")
+          nextButton.className = "button nextButton iconify"
+          nextButton.setAttribute("data-icon", self.config.nextIcon)
+          nextButton.setAttribute("data-inline", "false")
+        nextButtonWrapper.appendChild(nextButton)
+      controlWrapper.appendChild(nextButtonWrapper)
+
+      if (self.config.showVolControls == true){
+        let volUpButtonWrapper = document.createElement("span")
+          volUpButtonWrapper.className = "volUpButtonWrapper"
+          volUpButtonWrapper.addEventListener("click", ()=>{self.sendNotification("VOLUME_UP")})
+          let volUpButton = document.createElement("span")
+            volUpButton.className = "button volUpButton iconify"
+            volUpButton.setAttribute("data-icon", self.config.volUpIcon)
+            volUpButton.setAttribute("data-inline", "false")
+          volUpButtonWrapper.appendChild(volUpButton)
+        controlWrapper.appendChild(volUpButtonWrapper)
+      }
+
+    return controlWrapper
   },
 
   /**
@@ -67,218 +209,120 @@ Module.register('MMM-MplayerRadio', {
    */
   getDom() {
     const self = this
-    const wrapper = document.createElement("div")
-    const innerWrapper = document.createElement("table")
-      innerWrapper.className = "mradio"
-    if(this.config.showStations && (this.curStationIndex != null)){
-      const wrapperPrevious = document.createElement("tr")
-      wrapperPrevious.className=("previousWrapper")
-      if((this.previousStationIndex != null) && (this.curStationIndex !== this.previousStationIndex)){
-        wrapperPrevious.addEventListener("click", ()=>{self.sendSocketNotification("RADIO_PLAY", {
-          id: this.previousStationIndex
-        })})
-        const previousStationLogoWrapper = document.createElement("td")
-          previousStationLogoWrapper.className = "logoWrapper"
-          const previousStationLogo = document.createElement("img")
-            previousStationLogo.className = "logo"
-            previousStationLogo.alt = "No Image"
-            if(typeof this.config.stations[this.previousStationIndex].logo !== "undefined"){
-              previousStationLogo.src = this.config.stations[this.previousStationIndex].logo
-            } else {
-              previousStationLogo.src = this.config.missingLogoUrl
+    let wrapper = document.createElement("div")
+      wrapper.className = self.instanceCssClass+" wrapper"
+
+      let stationsWrapper = document.createElement("div")
+        stationsWrapper.className = "stationsWrapper"
+        if(self.config.showStations){
+          for (let curId = 0; curId < self.config.stations.length; curId ++){
+            console.log("CurrentProfile: "+self.currentProfile)
+            if(
+              (typeof self.config.stations[curId].profiles === 'undefined') || 
+              (self.currentProfilePattern.test(self.config.stations[curId].profiles))
+            ){
+              console.log("CurrentStationProfiles: "+self.config.stations[curId].profiles)
+              stationsWrapper.appendChild(self.getStationDomObject(curId))
             }
-          previousStationLogoWrapper.appendChild(previousStationLogo)
-        wrapperPrevious.appendChild(previousStationLogoWrapper)
+            
+          }
+        }
+      wrapper.appendChild(stationsWrapper)
 
-        const previousStationTitleWrapper = document.createElement("td")
-          previousStationTitleWrapper.className = "titleWrapper"
-          const previousStationTitle = document.createElement("span")
-            previousStationTitle.className = "title"
-            previousStationTitle.innerHTML = this.config.stations[this.previousStationIndex].title
-          previousStationTitleWrapper.appendChild(previousStationTitle)
-        wrapperPrevious.appendChild(previousStationTitleWrapper)
+      wrapper.appendChild(self.getStreamInfoDom())
+
+      if(self.config.showControls){
+        wrapper.appendChild(self.getControlDom())
       }
-      innerWrapper.appendChild(wrapperPrevious)
-
-      const wrapperCurrent = document.createElement("tr")
-        if(this.playing){
-          wrapperCurrent.className=("currentWrapper playing")
-        } else {
-          wrapperCurrent.className=("currentWrapper stopped")
-        }
-        
-        if(this.curStationIndex != null){
-          wrapperCurrent.addEventListener("click", ()=>{self.sendSocketNotification("RADIO_PLAY", {
-            id: this.curStationIndex
-          })})
-          const curStationLogoWrapper = document.createElement("td")
-            curStationLogoWrapper.className = "logoWrapper"
-            const curStationLogo = document.createElement("img")
-              curStationLogo.className = "logo"
-              curStationLogo.alt = "No Image"
-              if(typeof this.config.stations[this.curStationIndex].logo !== "undefined"){
-                curStationLogo.src = this.config.stations[this.curStationIndex].logo
-              } else {
-                curStationLogo.src = this.config.missingLogoUrl
-              }
-            curStationLogoWrapper.appendChild(curStationLogo)
-          wrapperCurrent.appendChild(curStationLogoWrapper)
-
-          const currentStationTitleWrapper = document.createElement("td")
-              currentStationTitleWrapper.className = "titleWrapper"
-            const currentStationTitle = document.createElement("span")
-              currentStationTitle.className = "title"
-              currentStationTitle.innerHTML = this.config.stations[this.curStationIndex].title
-            currentStationTitleWrapper.appendChild(currentStationTitle)
-          wrapperCurrent.appendChild(currentStationTitleWrapper)
-        }
-        innerWrapper.appendChild(wrapperCurrent)
-
-      const wrapperNext = document.createElement("tr")
-        wrapperNext.className=("nextWrapper")
-        if((this.nextStationIndex != null) && (this.curStationIndex !== this.nextStationIndex) && (this.previousStationIndex !== this.nextStationIndex)){
-          wrapperNext.addEventListener("click", ()=>{self.sendSocketNotification("RADIO_PLAY", {
-            id: this.nextStationIndex
-          })})
-          const nextStationLogoWrapper = document.createElement("td")
-            nextStationLogoWrapper.className = "logoWrapper"
-            const nextStationLogo = document.createElement("img")
-              nextStationLogo.className = "logo"
-              nextStationLogo.alt = "No Image"
-              if(typeof this.config.stations[this.nextStationIndex].logo !== "undefined"){
-                nextStationLogo.src = this.config.stations[this.nextStationIndex].logo
-              } else {
-                nextStationLogo.src = "./MMM-MplayerRadio/radio-freepnglogos.png"
-              }
-            nextStationLogoWrapper.appendChild(nextStationLogo)
-          wrapperNext.appendChild(nextStationLogoWrapper)
-
-          const nextStationTitleWrapper = document.createElement("td")
-              nextStationTitleWrapper.className = "titleWrapper"
-            const nextStationTitle = document.createElement("span")
-              nextStationTitle.className = "title"
-              nextStationTitle.innerHTML = this.config.stations[this.nextStationIndex].title
-            nextStationTitleWrapper.appendChild(nextStationTitle)
-          wrapperNext.appendChild(nextStationTitleWrapper)
-        }
-        innerWrapper.appendChild(wrapperNext)
-
-        const streamInfoWrapper = document.createElement("tr")
-          streamInfoWrapper.className = "streamInfoWrapper"
-        if(this.curStreamInfo != null ){
-          let streamInfo = document.createElement("td")
-            streamInfo.setAttribute("colspan", "2")
-            streamInfo.className = "streamInfo"
-            streamInfo.innerHTML = this.curStreamInfo
-          streamInfoWrapper.appendChild(streamInfo)
-          self.streamInfoObj = streamInfo
-        }
-        innerWrapper.appendChild(streamInfoWrapper)
-    } else {
-      const noInfoWrapper = document.createElement("tr")
-        noInfoWrapper.className = "noInfoWrapper"
-        const noInfo = document.createElement("td")
-          noInfo.setAttribute("colspan", "2")
-          noInfo.className = "noInfoWrapper iconify"
-          noInfo.setAttribute("data-icon",this.config.noInfoIcon)
-          noInfo.setAttribute("data-inline","false")
-        noInfoWrapper.appendChild(noInfo)
-      innerWrapper.appendChild(noInfoWrapper)
-    }
-
-    if(this.config.showControls){
-      const controlWrapper = document.createElement("tr")
-        controlWrapper.className = "controlWrapper"
-
-        const controlInnerWrapper = document.createElement("td")
-          controlInnerWrapper.className = "controlInnerWrapper"
-          controlInnerWrapper.setAttribute("colspan", "2")
-
-        if(self.config.showVolControls){
-          const volDownButtonWrapper = document.createElement("span")
-            volDownButtonWrapper.className = "button volDownButtonWrapper"
-            volDownButtonWrapper.addEventListener("click", ()=>{self.sendNotification("VOLUME_DOWN")})
-
-            const volDownButton = document.createElement("span")
-              volDownButton.className = "button volDownButton iconify"
-              volDownButton.setAttribute("data-icon", this.config.volDownIcon)
-              volDownButton.setAttribute("data-inline", "false")
-            volDownButtonWrapper.appendChild(volDownButton)
-          controlInnerWrapper.appendChild(volDownButtonWrapper)
-        }
-
-        const prevButtonWrapper = document.createElement("span")
-          prevButtonWrapper.className = "button previousButtonWrapper"
-          prevButtonWrapper.addEventListener("click", ()=>{self.sendSocketNotification("RADIO_PREVIOUS")})
-
-          const prevButton = document.createElement("span")
-            prevButton.className = "button previousButton iconify"
-            prevButton.setAttribute("data-icon", this.config.previousIcon)
-            prevButton.setAttribute("data-inline", "false")
-          prevButtonWrapper.appendChild(prevButton)
-          controlInnerWrapper.appendChild(prevButtonWrapper)
-        
-        if(this.playing){
-          const stopButtonWrapper = document.createElement("span")
-            stopButtonWrapper.className = "button stopButtonWrapper"
-            stopButtonWrapper.addEventListener("click", ()=>{self.sendSocketNotification("RADIO_STOP")})
-
-            const stopButton = document.createElement("span")
-              stopButton.className = "button stopButton iconify"
-              stopButton.setAttribute("data-icon", this.config.stopIcon)
-              stopButton.setAttribute("data-inline", "false")
-            stopButtonWrapper.appendChild(stopButton)
-            controlInnerWrapper.appendChild(stopButtonWrapper)
-        } else {
-          const playButtonWrapper = document.createElement("span")
-            playButtonWrapper.className = "button playButtonWrapper"
-            playButtonWrapper.addEventListener("click", ()=>{self.sendSocketNotification("RADIO_PLAY")})
-
-            const playButton = document.createElement("span")
-              playButton.className = "button playButton iconify"
-              playButton.setAttribute("data-icon", this.config.playIcon)
-              playButton.setAttribute("data-inline", "false")
-            playButtonWrapper.appendChild(playButton)
-            controlInnerWrapper.appendChild(playButtonWrapper)
-        }
-
-        const nextButtonWrapper = document.createElement("span")
-            nextButtonWrapper.className = "button nextButtonWrapper"
-            nextButtonWrapper.addEventListener("click", ()=>{self.sendSocketNotification("RADIO_NEXT")})
-
-          const nextButton = document.createElement("span")
-            nextButton.className = "button nextButton iconify"
-            nextButton.addEventListener("click", ()=>{self.sendSocketNotification("RADIO_NEXT")})
-            nextButton.setAttribute("data-icon", this.config.nextIcon)
-            nextButton.setAttribute("data-inline", "false")
-          nextButtonWrapper.appendChild(nextButton)
-        controlInnerWrapper.appendChild(nextButtonWrapper)
-
-        if(self.config.showVolControls){
-          const volUpButtonWrapper = document.createElement("span")
-            volUpButtonWrapper.className = "button volUpButtonWrapper"
-            volUpButtonWrapper.addEventListener("click", ()=>{self.sendNotification("VOLUME_UP")})
-
-            const volUpButton = document.createElement("span")
-              volUpButton.className = "button volUpButton iconify"
-              volUpButton.setAttribute("data-icon", this.config.volUpIcon)
-              volUpButton.setAttribute("data-inline", "false")
-            volUpButtonWrapper.appendChild(volUpButton)
-          controlInnerWrapper.appendChild(volUpButtonWrapper)
-        }
-        
-        controlWrapper.appendChild(controlInnerWrapper)
-        innerWrapper.appendChild(controlWrapper)
-    }
-
-    wrapper.appendChild(innerWrapper)
     return wrapper;
   },
 
+  getNextStationId: function(curId, type=1){
+    const self = this
+    var retId = null
+    if(curId !== null){
+      if(type > 0){
+        var newId = curId
+        for(var i = 0; i < self.config.stations.length; i++){
+          newId -= 1
+          if(newId < 0){
+            newId = self.config.stations.length - 1
+          }
+  
+          if(
+            (typeof self.config.stations[newId].profiles === 'undefined') || 
+            (self.currentProfilePattern.test(self.config.stations[newId].profiles))
+          ){
+            retId = newId
+            break
+          }
+        }
+      } else if(type < 0){
+        var newId = curId
+        for(var i = 0; i < self.config.stations.length; i++){
+          newId += 1
+          if(newId > self.config.stations.length - 1){
+            newId = 0
+          }
+  
+          if(
+            (typeof self.config.stations[newId].profiles === 'undefined') || 
+            (self.currentProfilePattern.test(self.config.stations[newId].profiles))
+          ){
+            retId = newId
+            break
+          }
+        }
+      } else if(type === 0){
+        if(
+          (typeof self.config.stations[curId].profiles === 'undefined') || 
+          (self.currentProfilePattern.test(self.config.stations[curId].profiles))
+        ){
+          return curId
+        } else {
+          return self.getNextStationId(curId, 1)
+        }
+      }
+    } else {
+      return self.getNextStationId(0,1)
+    }
+    return retId
+  },
+
   notificationReceived: function(notification,payload) {
-    if((notification === "CHANGED_PROFILE") ||
-       (notification === "RADIO_NEXT") ||
-       (notification === "RADIO_PREVIOUS") ||
+    const self = this
+    if (notification === 'CHANGED_PROFILE'){
+      if(typeof payload.to !== 'undefined'){
+        console.log("Updating profile information to: "+payload.to)
+        self.currentProfile = payload.to
+        self.currentProfilePattern = new RegExp('\\b'+payload.to+'\\b')
+
+        if(self.config.changeStationOnProfileChange){
+          var newId = self.getNextStationId(self.curStationIndex, 0)
+  
+          if(newId !== self.curStationIndex){
+            self.curStationIndex = newId
+            if(self.playing){
+              self.sendSocketNotification("RADIO_PLAY", {
+                id: newId,
+              })
+            } else {
+              self.curStreamInfo = payload.curStreamInfo
+            }
+          }
+        }
+
+        self.updateDom(this.config.animationSpeed)
+      }
+    } else if (notification === 'RADIO_NEXT'){
+      self.sendSocketNotification("RADIO_PLAY", {
+        id: self.getNextStationId(self.curStationIndex, 1),
+      })
+    } else if (notification === 'RADIO_PREVIOUS'){
+      self.sendSocketNotification("RADIO_PLAY", {
+        id: self.getNextStationId(self.curStationIndex, -1),
+      })
+    } else if(
        (notification === "RADIO_PLAY") ||
        (notification === "RADIO_STOP") ||
        (notification === "RADIO_TOGGLE")                     
@@ -288,26 +332,29 @@ Module.register('MMM-MplayerRadio', {
   },
 
   socketNotificationReceived: function (notification, payload) {
+    const self = this
     if(notification === "RADIO_PLAYING"){
       this.curStationIndex = payload.curStationIndex
-      this.previousStationIndex = payload.previousStationIndex
-      this.nextStationIndex = payload.nextStationIndex
       this.curStreamInfo = payload.curStreamInfo
       this.playing = true
       this.updateDom(this.config.animationSpeed)
+      if(this.activeStation != null){
+        console.log("Scrolling active Station to view")
+        //this.activeStation.scrollIntoView(false);
+        setTimeout(()=>{
+          self.activeStation.parentNode.scrollTop = self.activeStation.offsetTop - self.activeStation.parentNode.offsetTop;  
+        },this.config.animationSpeed)
+      }
       this.sendNotification(notification,payload)
     } else if(notification === "RADIO_STOPPED"){
       this.curStationIndex = payload.curStationIndex
-      this.previousStationIndex = payload.previousStationIndex
-      this.nextStationIndex = payload.nextStationIndex
       this.curStreamInfo = payload.curStreamInfo
       this.playing = false
       this.updateDom(this.config.animationSpeed)
       this.sendNotification(notification,payload)
     } else if(notification === "RADIO_CURRENT_STREAM_INFO"){
+      console.log("Updating Stream Info")
       this.curStationIndex = payload.curStationIndex
-      this.previousStationIndex = payload.previousStationIndex
-      this.nextStationIndex = payload.nextStationIndex
       this.curStreamInfo = payload.curStreamInfo
       this.playing = true
       //this.updateDom(this.config.animationSpeed)
@@ -317,8 +364,6 @@ Module.register('MMM-MplayerRadio', {
       
     } else if(notification === "RADIO_UPDATE_AFTER_PROFILE_CHANGE"){
       this.curStationIndex = payload.curStationIndex
-      this.previousStationIndex = payload.previousStationIndex
-      this.nextStationIndex = payload.nextStationIndex
       this.curStreamInfo = payload.curStreamInfo
       this.updateDom(this.config.animationSpeed)
     }
