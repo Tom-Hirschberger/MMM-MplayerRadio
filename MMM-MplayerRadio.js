@@ -216,12 +216,10 @@ Module.register('MMM-MplayerRadio', {
         stationsWrapper.className = "stationsWrapper"
         if(self.config.showStations){
           for (let curId = 0; curId < self.config.stations.length; curId ++){
-            console.log("CurrentProfile: "+self.currentProfile)
             if(
               (typeof self.config.stations[curId].profiles === 'undefined') || 
               (self.currentProfilePattern.test(self.config.stations[curId].profiles))
             ){
-              console.log("CurrentStationProfiles: "+self.config.stations[curId].profiles)
               stationsWrapper.appendChild(self.getStationDomObject(curId))
             }
             
@@ -313,14 +311,20 @@ Module.register('MMM-MplayerRadio', {
         }
 
         self.updateDom(this.config.animationSpeed)
+
+        if(self.activeStation != null){
+          setTimeout(()=>{
+            self.activeStation.parentNode.scrollTop = self.activeStation.offsetTop - self.activeStation.parentNode.offsetTop
+          }, 1000)
+        }
       }
     } else if (notification === 'RADIO_NEXT'){
       self.sendSocketNotification("RADIO_PLAY", {
-        id: self.getNextStationId(self.curStationIndex, 1),
-      })
+        id: self.getNextStationId(self.curStationIndex, -1),
+      })      
     } else if (notification === 'RADIO_PREVIOUS'){
       self.sendSocketNotification("RADIO_PLAY", {
-        id: self.getNextStationId(self.curStationIndex, -1),
+        id: self.getNextStationId(self.curStationIndex, 1),
       })
     } else if(
        (notification === "RADIO_PLAY") ||
@@ -338,13 +342,12 @@ Module.register('MMM-MplayerRadio', {
       this.curStreamInfo = payload.curStreamInfo
       this.playing = true
       this.updateDom(this.config.animationSpeed)
-      if(this.activeStation != null){
-        console.log("Scrolling active Station to view")
-        //this.activeStation.scrollIntoView(false);
+      if(self.activeStation != null){
         setTimeout(()=>{
-          self.activeStation.parentNode.scrollTop = self.activeStation.offsetTop - self.activeStation.parentNode.offsetTop;  
-        },this.config.animationSpeed)
+          self.activeStation.parentNode.scrollTop = self.activeStation.offsetTop - self.activeStation.parentNode.offsetTop
+        }, 1000)
       }
+
       this.sendNotification(notification,payload)
     } else if(notification === "RADIO_STOPPED"){
       this.curStationIndex = payload.curStationIndex
