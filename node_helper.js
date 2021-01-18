@@ -68,16 +68,29 @@ module.exports = NodeHelper.create({
         if(self.config.stations[self.curStationIndex].mplayerCache){
           mplayerCache = self.config.stations[self.curStationIndex].mplayerCache
         }
-        self.curStationProcess = spawn(self.config.mplayerPath,
-              args = ["-playlist", self.config.stations[self.curStationIndex].url,
-                      "-msglevel", "all=4",
-                      "-cache", mplayerCache
-              ],
-              options = {
-                  shell: false,
-                  windowsHide: true
-                }
-              )
+
+        if(self.config.stations[self.curStationIndex].url.endsWith(".mp3")) {
+          self.curStationProcess = spawn(self.config.mplayerPath,
+            args = [self.config.stations[self.curStationIndex].url,
+                    "-msglevel", "all=4",
+            ],
+            options = {
+                shell: false,
+                windowsHide: true
+              }
+          )
+        } else {
+          self.curStationProcess = spawn(self.config.mplayerPath,
+                args = ["-playlist", self.config.stations[self.curStationIndex].url,
+                        "-msglevel", "all=4",
+                        "-cache", mplayerCache
+                ],
+                options = {
+                    shell: false,
+                    windowsHide: true
+                  }
+                )
+        }
 
         self.playing = true
         self.curStationProcess.on("close", (err) =>{
