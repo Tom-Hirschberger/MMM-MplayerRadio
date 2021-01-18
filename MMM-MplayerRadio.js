@@ -11,12 +11,12 @@ Module.register('MMM-MplayerRadio', {
     changeStationOnProfileChange: true,
     showControls: true,
     showVolControls: true,
+    showStreamInfo: true,
     showStations: true,
     showLogos: true,
     showTitles: true,
     showScrollbar: false,
     scrollToActiveStation: true,
-    displayStationsOnStartup: false,
     missingLogoUrl: "./MMM-MplayerRadio/radio-freepnglogos.png",
     previousIcon: "ic-round-skip-previous",
     playIcon: "ic-round-play-arrow",
@@ -213,22 +213,26 @@ Module.register('MMM-MplayerRadio', {
     let wrapper = document.createElement("div")
       wrapper.className = self.instanceCssClass+" wrapper"
 
-      let stationsWrapper = document.createElement("div")
-        stationsWrapper.className = "stationsWrapper"
-        if(self.config.showStations){
-          for (let curId = 0; curId < self.config.stations.length; curId ++){
-            if(
-              (typeof self.config.stations[curId].profiles === 'undefined') || 
-              (self.currentProfilePattern.test(self.config.stations[curId].profiles))
-            ){
-              stationsWrapper.appendChild(self.getStationDomObject(curId))
+      if(self.config.showStations){
+        let stationsWrapper = document.createElement("div")
+          stationsWrapper.className = "stationsWrapper"
+          if(self.config.showStations){
+            for (let curId = 0; curId < self.config.stations.length; curId ++){
+              if(
+                (typeof self.config.stations[curId].profiles === 'undefined') || 
+                (self.currentProfilePattern.test(self.config.stations[curId].profiles))
+              ){
+                stationsWrapper.appendChild(self.getStationDomObject(curId))
+              }
+              
             }
-            
           }
-        }
-      wrapper.appendChild(stationsWrapper)
+        wrapper.appendChild(stationsWrapper)
+      }
 
-      wrapper.appendChild(self.getStreamInfoDom())
+      if(self.config.showStreamInfo){
+        wrapper.appendChild(self.getStreamInfoDom())
+      }
 
       if(self.config.showControls){
         wrapper.appendChild(self.getControlDom())

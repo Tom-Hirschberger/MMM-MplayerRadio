@@ -80,6 +80,10 @@
     height: 50px;
 }
 
+.mradio .streamInfoWrapper {
+    font-size: 16px;
+}
+
 .mradio .controlWrapper {
     padding-top: 5px;
     width: 100%;

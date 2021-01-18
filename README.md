@@ -112,7 +112,6 @@ If you prefere xmms2 to play the radio streams instead of mplayer you will find 
 | showVolControls | If you do not want the volume up/down buttons to be visible in the control bar you can hide them by setting this value to false | boolean | true |
 | showStations | If you do not want to see your stations but only the initial screen with the controls set this option to false | boolean | true |
 | missingLogoUrl | If you do not provide a logo for an station this one is used | String | "./MMM-MplayerRadio/radio-freepnglogos.png" |
-| displayStationsOnStartup | If you do not want to see the inital screen (screenshots) but the directly the stations set this option to true | boolean | false |
 | changeStationOnProfileChange | Should the station be changed if the profile changes and this station is not suitable for the new profile | boolean | true |
 | noInfoIcon | This icon will displayed in the inital screen and if you change to a profile that has no sations assosiated. You can use any iconify icon. | String | "noto:radio" |
 | previousIcon | This icon is used in the control section to switch to the previous station. It is an iconify icon, too. | String | "ic-round-skip-previous" |
