@@ -250,6 +250,8 @@ Module.register('MMM-MplayerRadio', {
       if(self.config.showControls){
         wrapper.appendChild(self.getControlDom())
       }
+
+      self.updateScrollPosition(1000)
     return wrapper;
   },
 
@@ -305,6 +307,15 @@ Module.register('MMM-MplayerRadio', {
     return retId
   },
 
+  updateScrollPosition: function(timeout){
+    const self = this
+    if(self.config.scrollToActiveStation && (self.activeStation != null)){
+      setTimeout(()=>{
+        self.activeStation.parentNode.scrollTop = self.activeStation.offsetTop - self.activeStation.parentNode.offsetTop
+      }, timeout)
+    }
+  },
+
   notificationReceived: function(notification,payload) {
     const self = this
     if (notification === 'CHANGED_PROFILE'){
@@ -329,12 +340,6 @@ Module.register('MMM-MplayerRadio', {
         }
 
         self.updateDom(this.config.animationSpeed)
-
-        if(self.config.scrollToActiveStation && (self.activeStation != null)){
-          setTimeout(()=>{
-            self.activeStation.parentNode.scrollTop = self.activeStation.offsetTop - self.activeStation.parentNode.offsetTop
-          }, 1000)
-        }
       }
     } else if (notification === 'RADIO_NEXT'){
       self.sendSocketNotification("RADIO_PLAY", {
@@ -360,24 +365,12 @@ Module.register('MMM-MplayerRadio', {
       this.curStreamInfo = payload.curStreamInfo
       this.playing = true
       this.updateDom(this.config.animationSpeed)
-      if(self.config.scrollToActiveStation && (self.activeStation != null)){
-        setTimeout(()=>{
-          self.activeStation.parentNode.scrollTop = self.activeStation.offsetTop - self.activeStation.parentNode.offsetTop
-        }, 1000)
-      }
-
       this.sendNotification(notification,payload)
     } else if(notification === "RADIO_STOPPED"){
       this.curStationIndex = payload.curStationIndex
       this.curStreamInfo = payload.curStreamInfo
       this.playing = false
       this.updateDom(this.config.animationSpeed)
-      if(self.config.scrollToActiveStation && (self.activeStation != null)){
-        setTimeout(()=>{
-          self.activeStation.parentNode.scrollTop = self.activeStation.offsetTop - self.activeStation.parentNode.offsetTop
-        }, 1000)
-      }
-      
       this.sendNotification(notification,payload)
     } else if(notification === "RADIO_CURRENT_STREAM_INFO"){
       console.log("Updating Stream Info")
