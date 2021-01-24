@@ -27,6 +27,7 @@ Module.register('MMM-MplayerRadio', {
     customCommand: null,
     customCommandArgs: [],
     autoplay: null,
+    stopOnSuspend: false,
   },
 
   /**
@@ -43,6 +44,13 @@ Module.register('MMM-MplayerRadio', {
 
   getScripts: function() {
     return ['//code.iconify.design/1/1.0.5/iconify.min.js']
+  },
+
+  suspend: function() {
+		const self = this
+		if (self.config.stopOnSuspend){
+      self.sendSocketNotification("RADIO_STOP")
+    }
   },
 
   /**

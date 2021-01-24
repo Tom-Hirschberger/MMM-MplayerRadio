@@ -111,6 +111,7 @@ If you prefere xmms2 to play the radio streams instead of mplayer you will find 
 | scrollableStations | Should the list of stations be scrollable | boolean | false |
 | scrollToActiveStation | Should the position of the station list be adjusted to be the current active station be the first element after a station change | true |
 | missingLogoUrl | If you do not provide a logo for an station this one is used | String | "./MMM-MplayerRadio/radio-freepnglogos.png" |
+| stopOnSuspend | Should the player be stopped if the module gets hidden (i.e. because the page changes)? | boolean | false |
 | changeStationOnProfileChange | Should the station be changed if the profile changes and this station is not suitable for the new profile | boolean | true |
 | noInfoIcon | This icon will displayed in the inital screen and if you change to a profile that has no sations assosiated. You can use any iconify icon. | String | "noto:radio" |
 | previousIcon | This icon is used in the control section to switch to the previous station. It is an iconify icon, too. | String | "ic-round-skip-previous" |
