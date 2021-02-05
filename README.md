@@ -3,6 +3,8 @@
 This module plays .m3u playlists with the system mplayer instance. Multiple stations are supported and can be switched either by notification or touch control. The currently played station is highlighted. If the radio station provides stream info (current song, studio hotline, etc.) the information will be displayed, too.
 Different stations can be used in different profiles (profile string in configuration).
 
+**⚠️Currently mplayer has a lot of problems and is not able to play streams properly. Also there is a problem that there is no sound on some devices since Rasperry OS moved to PulsAudio instead auf ALSA (December 2020). To avoid this problems i strongly suggest to use the VLC player instaed. In consequence no stream information will be provided. There is an description in the configuration section on how to change to the VLC player!⚠️**
+
 **If you want to use the volume buttons please make sure to install the https://github.com/Anonym-tsk/MMM-Volume module.**
 
 Most of my stations are listed at http://www.surfmusik.de. This site provides mostly an m3u-file of the stations for external players. Simple choose the station you like, listen to it in the browser of your choice and right click on the "External Player" link. Copy the link and add it to your configuration.
@@ -39,6 +41,7 @@ Install the player with
 ```
 
 #### Asound ####
+**DEPRECATED! As of the release of Rasperry OS in December 2020 the audio system has been changed from ALSA to PulseAudio and this configuration is not needed anymore!**
 I use an Hifiberry DAC device as audio output. You might need to add an asound.conf to get sound output on the mirror.
 This is my file "/etc/asound.conf"
 ```
@@ -93,6 +96,58 @@ You can try it without an asound.conf. If you get no sound try adding this one a
 			},
 		},
 ```
+
+### VLC Player instead of Mplayer ###
+As mention above Mplayer has a lot of problems to play streams currently. My personal suggestion is to switch to VLC player instead by setting a custom command in the configuration section.
+First check if VLC is installed or install it if needed:
+```
+  sudo apt update && sudo apt install -y vlc
+```
+
+Basically you only need to add two lines to the configuration (CUSTOM_COMMAND, CUSTOM_COMMAND_ARGS):
+```
+  customCommand: "/usr/bin/vlc",
+  customCommandArgs: ["-I","dummy","###URL###"],
+```
+
+The example configuration from above then looks like:
+```json5
+    {
+			module: "MMM-MplayerRadio",
+			header: "Radio",
+			position: "top_center",
+			config: {
+				customCommand: "/usr/bin/vlc",
+  				customCommandArgs: ["-I","dummy","###URL###"],
+				//autoplay: 0,
+				stations: [
+					{
+						title: "Antenne.de",
+						url: "http://www.surfmusik.de/m3u/antenne-bayern,922.m3u",
+						logo: "https://upload.wikimedia.org/wikipedia/commons/a/ac/Antenne-bayern-logo.png",
+					},
+					{
+						title: "Bayern 3",
+						url: "http://www.surfmusik.de/m3u/bayern-3,925.m3u",
+						logo: "https://upload.wikimedia.org/wikipedia/de/thumb/d/d3/Bayern_3.svg/200px-Bayern_3.svg.png",
+					},
+					{
+						title: "Rock Antenne",
+						url: "http://www.surfmusik.de/m3u/rock-antenne,950.m3u",
+						logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Rock_Antenne_Logo_2017.svg/200px-Rock_Antenne_Logo_2017.svg.png",
+					},
+					{
+						title: "Radio Gong",
+						url: "http://www.surfmusik.de/m3u/gong-96-3-muenchen,2021.m3u",
+						logo: "https://upload.wikimedia.org/wikipedia/commons/7/78/Radio_Gong_96.3_Logo.png",
+					}
+				],
+				displayStationsOnStartup: true
+			},
+		},
+```
+
+**In consequence no stream information is provided because VLC does not evaluate the information send by the stations!**
 
 ### XMMS2 ###
 If you prefere xmms2 to play the radio streams instead of mplayer you will find an custom script "playRadio.bash" in the scripts folder. There is a example config in the examples directory, too.
