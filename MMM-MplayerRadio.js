@@ -15,6 +15,7 @@ Module.register('MMM-MplayerRadio', {
     showLogos: true,
     showTitles: true,
     scrollableStations: false,
+    stationsBeforeAndAfter: 1,
     scrollToActiveStation: true,
     missingLogoUrl: "./MMM-MplayerRadio/radio-freepnglogos.png",
     previousIcon: "ic-round-skip-previous",
@@ -27,6 +28,7 @@ Module.register('MMM-MplayerRadio', {
     customCommand: null,
     customCommandArgs: [],
     autoplay: null,
+    initStation: null,
     stopOnSuspend: false,
   },
 
@@ -84,7 +86,12 @@ Module.register('MMM-MplayerRadio', {
         self.sendSocketNotification("RADIO_PLAY",{id: self.config.autoplay})
       }, 1000)
     } else {
-      self.curStationIndex = 0
+      if(self.config.initStation !== null){
+        self.curStationIndex = self.config.initStation
+      } else {
+        self.curStationIndex = self.getNextStationId(1, type=0)
+      }
+      
     }
   },
 
@@ -92,7 +99,7 @@ Module.register('MMM-MplayerRadio', {
     const self = this
     let curId = id
     let stationWrapper = document.createElement("div")
-      stationWrapper.addEventListener("click", ()=>{self.sendSocketNotification("RADIO_PLAY", {
+      stationWrapper.addEventListener("click", ()=>{self.notificationReceived("RADIO_PLAY", {
         id: curId
       })})
       if(self.curStationIndex === curId){
@@ -164,9 +171,7 @@ Module.register('MMM-MplayerRadio', {
       let prevButtonWrapper = document.createElement("span")
         prevButtonWrapper.className = "previousButtonWrapper"
         prevButtonWrapper.addEventListener("click", ()=>{
-          self.sendSocketNotification("RADIO_PLAY", {
-            id: self.getNextStationId(self.curStationIndex, 1),
-          })
+          self.notificationReceived("RADIO_PREVIOUS")
         })
         let prevButton = document.createElement("span")
           prevButton.className = "button previousButton iconify"
@@ -178,7 +183,7 @@ Module.register('MMM-MplayerRadio', {
       if(this.playing){
         let stopButtonWrapper = document.createElement("span")
           stopButtonWrapper.className = "stopButtonWrapper"
-          stopButtonWrapper.addEventListener("click", ()=>{self.sendSocketNotification("RADIO_STOP")})
+          stopButtonWrapper.addEventListener("click", ()=>{self.notificationReceived("RADIO_STOP")})
           let stopButton = document.createElement("span")
             stopButton.className = "button stopButton iconify"
             stopButton.setAttribute("data-icon", this.config.stopIcon)
@@ -188,7 +193,12 @@ Module.register('MMM-MplayerRadio', {
       } else {
         let playButtonWrapper = document.createElement("span")
           playButtonWrapper.className = "playButtonWrapper"
-          playButtonWrapper.addEventListener("click", ()=>{self.sendSocketNotification("RADIO_PLAY")})
+          playButtonWrapper.addEventListener("click", ()=>{
+            self.notificationReceived("RADIO_PLAY",
+              {
+                id: self.curStationIndex,
+              }
+            )})
           let playButton = document.createElement("span")
             playButton.className = "button playButton iconify"
             playButton.setAttribute("data-icon", this.config.playIcon)
@@ -200,9 +210,7 @@ Module.register('MMM-MplayerRadio', {
       let nextButtonWrapper = document.createElement("span")
         nextButtonWrapper.className = "nextButtonWrapper"
         nextButtonWrapper.addEventListener("click", ()=>{
-          self.sendSocketNotification("RADIO_PLAY", {
-            id: self.getNextStationId(self.curStationIndex, -1),
-          })
+          self.notificationReceived("RADIO_NEXT")
         })
         let nextButton = document.createElement("span")
           nextButton.className = "button nextButton iconify"
@@ -237,15 +245,36 @@ Module.register('MMM-MplayerRadio', {
       if(self.config.showStations){
         let stationsWrapper = document.createElement("div")
           stationsWrapper.className = "stationsWrapper"
-          if(self.config.showStations){
-            for (let curId = 0; curId < self.config.stations.length; curId ++){
-              if(
-                (typeof self.config.stations[curId].profiles === 'undefined') || 
-                (self.currentProfilePattern.test(self.config.stations[curId].profiles))
-              ){
-                stationsWrapper.appendChild(self.getStationDomObject(curId))
+          if(self.config.showStations || (self.getNumberOfStationsInCurrentProfile() < ((self.config.stationsBeforeAndAfter * 2)+1))){
+            if (self.config.scrollableStations){
+              for (let curId = 0; curId < self.config.stations.length; curId ++){
+                if(
+                  (typeof self.config.stations[curId].profiles === 'undefined') || 
+                  (self.currentProfilePattern.test(self.config.stations[curId].profiles))
+                ){
+                  stationsWrapper.appendChild(self.getStationDomObject(curId))
+                }
+                
               }
+            } else {
+              let stationBeforeIdx = self.curStationIndex
+              for(let i = 0; i < self.config.stationsBeforeAndAfter; i += 1){
+                stationBeforeIdx = self.getNextStationId(stationBeforeIdx, 1)
+              }
+
+              stationsWrapper.appendChild(self.getStationDomObject(stationBeforeIdx))
+              for (let i = 0; i < self.config.stationsBeforeAndAfter-1; i++){
+                stationBeforeIdx = self.getNextStationId(stationBeforeIdx, type=-1)
+                stationsWrapper.appendChild(self.getStationDomObject(stationBeforeIdx))
+              }
+
+              stationsWrapper.appendChild(self.getStationDomObject(self.curStationIndex))
               
+              let curNextId = self.getNextStationId(self.curStationIndex, type=-1)
+              for (let stationAfterIdx = 0; stationAfterIdx < self.config.stationsBeforeAndAfter; stationAfterIdx += 1){
+                stationsWrapper.appendChild(self.getStationDomObject(curNextId))
+                curNextId = self.getNextStationId(curNextId, type=-1)
+              }
             }
           }
         wrapper.appendChild(stationsWrapper)
@@ -263,11 +292,30 @@ Module.register('MMM-MplayerRadio', {
     return wrapper;
   },
 
+  getNumberOfStationsInCurrentProfile: function(){
+    if (self.currentProfile === ''){
+      return self.config.stations.length
+    } else {
+      let curCount = 0;
+      for (let curId = 0; curId < self.config.stations.length; curId ++){
+        if(
+          (typeof self.config.stations[curId].profiles === 'undefined') || 
+          (self.currentProfilePattern.test(self.config.stations[curId].profiles))
+        ){
+          curCount += 1
+        }
+      }
+
+      return curCount
+    }
+  },
+
   getNextStationId: function(curId, type=1){
     const self = this
     var retId = null
     if(curId !== null){
       if(type > 0){
+        console.log("Searching for fitting prev station")
         var newId = curId
         for(var i = 0; i < self.config.stations.length; i++){
           newId -= 1
@@ -277,13 +325,15 @@ Module.register('MMM-MplayerRadio', {
   
           if(
             (typeof self.config.stations[newId].profiles === 'undefined') || 
-            (self.currentProfilePattern.test(self.config.stations[newId].profiles))
+            ((typeof self.currentProfilePattern !== 'undefined') && 
+            (self.currentProfilePattern.test(self.config.stations[newId].profiles)))
           ){
             retId = newId
             break
           }
         }
       } else if(type < 0){
+        console.log("Searching for fitting next station")
         var newId = curId
         for(var i = 0; i < self.config.stations.length; i++){
           newId += 1
@@ -293,7 +343,8 @@ Module.register('MMM-MplayerRadio', {
   
           if(
             (typeof self.config.stations[newId].profiles === 'undefined') || 
-            (self.currentProfilePattern.test(self.config.stations[newId].profiles))
+            ((typeof self.currentProfilePattern !== 'undefined') && 
+            (self.currentProfilePattern.test(self.config.stations[newId].profiles)))
           ){
             retId = newId
             break
@@ -302,11 +353,14 @@ Module.register('MMM-MplayerRadio', {
       } else if(type === 0){
         if(
           (typeof self.config.stations[curId].profiles === 'undefined') || 
-          (self.currentProfilePattern.test(self.config.stations[curId].profiles))
+          ((typeof self.currentProfilePattern !== 'undefined') && 
+          (self.currentProfilePattern.test(self.config.stations[curId].profiles)))
         ){
+          console.log("Station with id: "+curId+" is ok for profile: "+self.currentProfile)
           return curId
         } else {
-          return self.getNextStationId(curId, 1)
+          console.log("Station with id: "+curId+" is NOT ok for profile: "+self.currentProfile)
+          return self.getNextStationId(curId, -1)
         }
       }
     } else {
@@ -317,7 +371,7 @@ Module.register('MMM-MplayerRadio', {
 
   updateScrollPosition: function(timeout){
     const self = this
-    if(self.config.scrollToActiveStation && (self.activeStation != null)){
+    if((self.config.scrollableStations)&&(self.config.scrollToActiveStation && (self.activeStation != null))){
       setTimeout(()=>{
         self.activeStation.parentNode.scrollTop = self.activeStation.offsetTop - self.activeStation.parentNode.offsetTop
       }, timeout)
@@ -357,11 +411,19 @@ Module.register('MMM-MplayerRadio', {
       self.sendSocketNotification("RADIO_PLAY", {
         id: self.getNextStationId(self.curStationIndex, 1),
       })
-    } else if(
-       (notification === "RADIO_PLAY") ||
-       (notification === "RADIO_STOP") ||
-       (notification === "RADIO_TOGGLE")                     
+    } else if (notification === "RADIO_TOGGLE") {
+      if(self.playing){
+        self.sendSocketNotification("RADIO_STOP")
+      } else {
+        self.sendSocketNotification("RADIO_PLAY", {
+          id: self.curStationIndex,
+        })
+      }
+    } else if( (notification === "RADIO_PLAY") ||
+               (notification === "RADIO_STOP")
     ){
+      console.log("RADIO: Notification->"+notification)
+      console.log("RADIO: PAYLOAD->"+JSON.stringify(payload))
       this.sendSocketNotification(notification,payload)
     }
   },
@@ -373,16 +435,12 @@ Module.register('MMM-MplayerRadio', {
       this.curStreamInfo = payload.curStreamInfo
       this.playing = true
       this.updateDom(this.config.animationSpeed)
-      this.sendNotification(notification,payload)
     } else if(notification === "RADIO_STOPPED"){
-      this.curStationIndex = payload.curStationIndex
-      this.curStreamInfo = payload.curStreamInfo
+      this.curStreamInfo = null
       this.playing = false
       this.updateDom(this.config.animationSpeed)
-      this.sendNotification(notification,payload)
     } else if(notification === "RADIO_CURRENT_STREAM_INFO"){
       console.log("Updating Stream Info")
-      this.curStationIndex = payload.curStationIndex
       this.curStreamInfo = payload.curStreamInfo
       this.playing = true
       //this.updateDom(this.config.animationSpeed)

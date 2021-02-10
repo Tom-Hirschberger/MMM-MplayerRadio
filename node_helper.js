@@ -171,6 +171,7 @@ module.exports = NodeHelper.create({
       self.config = payload
       self.started = true
     } else if (notification === 'RADIO_PLAY'){
+      console.log(self.name+": Received Play with payload: "+JSON.stringify(payload))
       if(typeof payload.id !== 'undefined'){
         if((payload.id >= 0) && (payload.id < self.config.stations.length)){
           self.playStation(payload.id)
@@ -186,13 +187,6 @@ module.exports = NodeHelper.create({
       }
     } else if (notification === 'RADIO_STOP'){
       self.stopStation(true)
-    } else if (notification === 'RADIO_TOGGLE'){
-      self.initialState = false
-      if(self.curStationProcess !== null){
-        self.stopStation(true)
-      } else {
-        self.playStation(self.getNextStationId(self.curStationIndex, 0))
-      }
     }
   }
 })
