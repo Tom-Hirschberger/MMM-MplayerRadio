@@ -73,19 +73,13 @@ You can try it without an asound.conf. If you get no sound try adding this one a
 				stations: [
 					{
 						title: "Antenne.de",
-						url: "http://www.surfmusik.de/m3u/antenne-bayern,922.m3u",
+						url: "http://play.antenne.de/antenne.m3u",
 						logo: "https://upload.wikimedia.org/wikipedia/commons/a/ac/Antenne-bayern-logo.png",
 					},
 					{
-						title: "Bayern 3",
-						url: "http://www.surfmusik.de/m3u/bayern-3,925.m3u",
-						logo: "https://upload.wikimedia.org/wikipedia/de/thumb/d/d3/Bayern_3.svg/200px-Bayern_3.svg.png",
-					},
-					{
 						title: "Rock Antenne",
-						url: "http://www.surfmusik.de/m3u/rock-antenne,950.m3u",
+						url: "http://play.rockantenne.de/rockantenne.m3u",
 						logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Rock_Antenne_Logo_2017.svg/200px-Rock_Antenne_Logo_2017.svg.png",
-						mplayerCache: 2048,
 					},
 					{
 						title: "Radio Gong",
@@ -123,17 +117,17 @@ The example configuration from above then looks like:
 				stations: [
 					{
 						title: "Antenne.de",
-						url: "http://www.surfmusik.de/m3u/antenne-bayern,922.m3u",
+						url: "http://play.antenne.de/antenne.m3u",
 						logo: "https://upload.wikimedia.org/wikipedia/commons/a/ac/Antenne-bayern-logo.png",
 					},
 					{
 						title: "Bayern 3",
-						url: "http://www.surfmusik.de/m3u/bayern-3,925.m3u",
+						url: "https://streams.br.de/bayern3_1.m3u",
 						logo: "https://upload.wikimedia.org/wikipedia/de/thumb/d/d3/Bayern_3.svg/200px-Bayern_3.svg.png",
 					},
 					{
 						title: "Rock Antenne",
-						url: "http://www.surfmusik.de/m3u/rock-antenne,950.m3u",
+						url: "http://play.rockantenne.de/rockantenne.m3u",
 						logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Rock_Antenne_Logo_2017.svg/200px-Rock_Antenne_Logo_2017.svg.png",
 					},
 					{
@@ -156,6 +150,7 @@ If you prefere xmms2 to play the radio streams instead of mplayer you will find 
 | Option  | Description | Type | Default |
 | ------- | --- | --- | --- |
 | autoplay | If you like to play a station automatically after the module starts simply specify its index (starting with 0) here | Integer | null |
+| initStation | If this value is provided instead of the station with index 1 the station with this index will be selected at the start (but not played as with autplay) | Integer | null |
 | stations | An array containing station opjects; Each one needs to have an title and an url; | Array | [] |
 | showStations | If you do not want to see your stations but only the initial screen with the controls set this option to false | boolean | true |
 | showStreamInfo | If you do not want to see the information about the current running stream (if provided) you can change this option to false | boolean | true |
@@ -163,7 +158,8 @@ If you prefere xmms2 to play the radio streams instead of mplayer you will find 
 | showVolControls | If you do not want the volume up/down buttons to be visible in the control bar you can hide them by setting this value to false | boolean | true |
 | showLogos | Should the logos of the stations be displayed? | boolean | true |
 | showTitles | Should the titles of the stations be displayed? | boolean | true |
-| scrollableStations | Should the list of stations be scrollable | boolean | false |
+| stationsBeforeAndAfter | How many stations should be displayed before and after the current active one. This value is only used if "scrollableStations" is set to false. | Integer | 1 |
+| scrollableStations | Should the list of stations be scrollable. If not the count of stations before and after will be displayed. | boolean | false |
 | scrollToActiveStation | Should the position of the station list be adjusted to be the current active station be the first element after a station change | true |
 | missingLogoUrl | If you do not provide a logo for an station this one is used | String | "./MMM-MplayerRadio/radio-freepnglogos.png" |
 | stopOnSuspend | Should the player be stopped if the module gets hidden (i.e. because the page changes)? | boolean | false |
