@@ -245,8 +245,9 @@ Module.register('MMM-MplayerRadio', {
       if(self.config.showStations){
         let stationsWrapper = document.createElement("div")
           stationsWrapper.className = "stationsWrapper"
-          if(self.config.showStations || (self.getNumberOfStationsInCurrentProfile() < ((self.config.stationsBeforeAndAfter * 2)+1))){
-            if (self.config.scrollableStations){
+          if(self.config.showStations){
+            console.log("RADIO: Number of stations in this profile: "+self.getNumberOfStationsInCurrentProfile())
+            if (self.config.scrollableStations || (self.getNumberOfStationsInCurrentProfile() < ((self.config.stationsBeforeAndAfter * 2)+1))){
               for (let curId = 0; curId < self.config.stations.length; curId ++){
                 if(
                   (typeof self.config.stations[curId].profiles === 'undefined') || 
@@ -293,6 +294,7 @@ Module.register('MMM-MplayerRadio', {
   },
 
   getNumberOfStationsInCurrentProfile: function(){
+    const self = this
     if (self.currentProfile === ''){
       return self.config.stations.length
     } else {
