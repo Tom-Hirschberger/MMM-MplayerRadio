@@ -89,7 +89,11 @@ Module.register('MMM-MplayerRadio', {
       if(self.config.initStation !== null){
         self.curStationIndex = self.config.initStation
       } else {
-        self.curStationIndex = self.getNextStationId(1, type=0)
+        if (self.config.stations.length > 2){
+          self.curStationIndex = self.getNextStationId(1, type=0)
+        } else {
+          self.curStationIndex = self.getNextStationId(0, type=0)
+        }
       }
       
     }
