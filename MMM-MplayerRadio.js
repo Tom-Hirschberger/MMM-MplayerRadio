@@ -430,6 +430,18 @@ Module.register('MMM-MplayerRadio', {
     ){
       console.log("RADIO: Notification->"+notification)
       console.log("RADIO: PAYLOAD->"+JSON.stringify(payload))
+      if ((payload === null) ||
+          (typeof payload === "undefined")
+      ){
+        payload = {}
+      }
+
+      if (
+        (typeof payload['id'] === "undefined") && 
+        (typeof payload['id'] === "undefined") 
+      ){
+        payload["id"] = self.curStationIndex
+      }
       this.sendSocketNotification(notification,payload)
     }
   },
