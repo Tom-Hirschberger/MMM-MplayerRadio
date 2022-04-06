@@ -164,6 +164,11 @@ module.exports = NodeHelper.create({
     }
   },
 
+  stop: function () {
+    const self = this
+    self.stopStation(false)
+  },
+
   socketNotificationReceived: function (notification, payload) {
     const self = this
     console.log(self.name + ': Received notification '+notification)
