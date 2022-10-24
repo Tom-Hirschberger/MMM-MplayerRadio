@@ -149,6 +149,11 @@ If you prefere xmms2 to play the radio streams instead of mplayer you will find 
 ### STREAMLINK ###
 If you want to listen to a stream which does not send continously you may want to use the streamlinkWrapper.bash script in the scripts directory. It supports auto reconnects. An example config can be found in the examples directory. The first option is the time to wait for the stream to send data. The second option is the time to wait between to reconnect attempts. And the third is the url of the stream.
 
+Make sure to install streamlink i.e. with these commands:
+```
+sudo apt -y update && sudo apt -y install streamlink
+```
+
 ### General ###
 | Option  | Description | Type | Default |
 | ------- | --- | --- | --- |
