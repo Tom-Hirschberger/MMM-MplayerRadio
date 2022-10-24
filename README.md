@@ -146,6 +146,9 @@ The example configuration from above then looks like:
 ### XMMS2 ###
 If you prefere xmms2 to play the radio streams instead of mplayer you will find an custom script "playRadio.bash" in the scripts folder. There is a example config in the examples directory, too.
 
+### STREAMLINK ###
+If you want to listen to a stream which does not send continously you may want to use the streamlinkWrapper.bash script in the scripts directory. It supports auto reconnects. An example config can be found in the examples directory. The first option is the time to wait for the stream to send data. The second option is the time to wait between to reconnect attempts. And the third is the url of the stream.
+
 ### General ###
 | Option  | Description | Type | Default |
 | ------- | --- | --- | --- |
