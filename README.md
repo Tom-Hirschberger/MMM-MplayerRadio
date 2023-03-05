@@ -1,50 +1,63 @@
 
 # MMM-MplayerRadio #
+
 This module plays .m3u playlists with the system mplayer instance. Multiple stations are supported and can be switched either by notification or touch control. The currently played station is highlighted. If the radio station provides stream info (current song, studio hotline, etc.) the information will be displayed, too.
 Different stations can be used in different profiles (profile string in configuration).
 
-**⚠️Currently mplayer has a lot of problems and is not able to play streams properly. Also there is a problem that there is no sound on some devices since Rasperry OS moved to PulsAudio instead auf ALSA (December 2020). To avoid this problems i strongly suggest to use the VLC player instaed. In consequence no stream information will be provided. There is an description in the configuration section on how to change to the VLC player!⚠️**
+**Currently mplayer has a lot of problems and is not able to play streams properly. Also there is a problem that there is no sound on some devices since Rasperry OS moved to PulsAudio instead auf ALSA (December 2020). To avoid this problems i strongly suggest to use the VLC player instaed. In consequence no stream information will be provided. There is an description in the configuration section on how to change to the VLC player!**
 
-**If you want to use the volume buttons please make sure to install the https://github.com/Anonym-tsk/MMM-Volume module.**
+**If you want to use the volume buttons please make sure to install the <https://github.com/Anonym-tsk/MMM-Volume> module.**
 
-Most of my stations are listed at http://www.surfmusik.de. This site provides mostly an m3u-file of the stations for external players. Simple choose the station you like, listen to it in the browser of your choice and right click on the "External Player" link. Copy the link and add it to your configuration.
-The logos of the stations can be choosen by url (good resource https://commons.wikimedia.org/wiki/Category:Radio_station_logos_of_Germany). If no logo is specified an dummy is used.
+Most of my stations are listed at <http://www.surfmusik.de>. This site provides mostly an m3u-file of the stations for external players. Simple choose the station you like, listen to it in the browser of your choice and right click on the "External Player" link. Copy the link and add it to your configuration.
+The logos of the stations can be choosen by url (good resource <https://commons.wikimedia.org/wiki/Category:Radio_station_logos_of_Germany>). If no logo is specified an dummy is used.
 
 Hint: It may be possible to play any songs you like by creating an .m3u file of them and adding the file to local public folder. But i did not test this.
 
 ## Screenshots ##
+
 ### In Action ###
+
 ![alt text](https://github.com/Tom-Hirschberger/MMM-MplayerRadio/raw/master/examples/threeStationsOnePlaying.png "ThreeStations with one playing and volume controls")
 
 ![alt text](https://github.com/Tom-Hirschberger/MMM-MplayerRadio/raw/master/examples/threeStationsStopped.png "ThreeStations with stopped state")
 
-## Installation
+## Installation ##
 
 ### System ###
+
 #### Mplayer ####
+
 Make sure you installed mplayer on your system. Simple type the following command
-```
+
+```bash
     mplayer
 ```
+
 The output should look like
-```
+
+```bash
     MPlayer 1.3.0 (Debian), built with gcc-8 (C) 2000-2016 MPlayer Team
 ```
+
 If there is something like
-```
+
+```bash
     -bash: mplayer: command not found
 ```
 
 Install the player with
-```
+
+```bash
     sudo apt update && sudo apt install mplayer
 ```
 
 #### Asound ####
+
 **DEPRECATED! As of the release of Rasperry OS in December 2020 the audio system has been changed from ALSA to PulseAudio and this configuration is not needed anymore!**
 I use an Hifiberry DAC device as audio output. You might need to add an asound.conf to get sound output on the mirror.
 This is my file "/etc/asound.conf"
-```
+
+```text
     pcm.!default  {
         type hw card 0
     }
@@ -52,109 +65,163 @@ This is my file "/etc/asound.conf"
         type hw card 0
     }
 ```
+
 You can try it without an asound.conf. If you get no sound try adding this one and restart the pi.
 
-
 ### Module ###
+
+```bash
     cd ~/MagicMirror/modules
     git clone https://github.com/Tom-Hirschberger/MMM-MplayerRadio.git
     cd MMM-MplayerRadio
     npm install
-
+```
 
 ## Configuration ##
+
 ```json5
     {
-			module: "MMM-MplayerRadio",
-			header: "Radio",
-			position: "top_center",
-			config: {
-				//autoplay: 0,
-				stations: [
-					{
-						title: "Antenne.de",
-						url: "http://play.antenne.de/antenne.m3u",
-						logo: "https://upload.wikimedia.org/wikipedia/commons/a/ac/Antenne-bayern-logo.png",
-					},
-					{
-						title: "Rock Antenne",
-						url: "http://play.rockantenne.de/rockantenne.m3u",
-						logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Rock_Antenne_Logo_2017.svg/200px-Rock_Antenne_Logo_2017.svg.png",
-					},
-					{
-						title: "Radio Gong",
-						url: "http://www.surfmusik.de/m3u/gong-96-3-muenchen,2021.m3u",
-						logo: "https://upload.wikimedia.org/wikipedia/commons/7/78/Radio_Gong_96.3_Logo.png",
-					}
-				],
-			},
-		},
+   module: "MMM-MplayerRadio",
+   header: "Radio",
+   position: "top_center",
+   config: {
+    //autoplay: 0,
+    stations: [
+     {
+      title: "Antenne.de",
+      url: "http://play.antenne.de/antenne.m3u",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/a/ac/Antenne-bayern-logo.png",
+     },
+     {
+      title: "Rock Antenne",
+      url: "http://play.rockantenne.de/rockantenne.m3u",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Rock_Antenne_Logo_2017.svg/200px-Rock_Antenne_Logo_2017.svg.png",
+     },
+     {
+      title: "Radio Gong",
+      url: "http://www.surfmusik.de/m3u/gong-96-3-muenchen,2021.m3u",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/7/78/Radio_Gong_96.3_Logo.png",
+     }
+    ],
+   },
+  },
 ```
 
 ### VLC Player instead of Mplayer ###
+
 As mention above Mplayer has a lot of problems to play streams currently. My personal suggestion is to switch to VLC player instead by setting a custom command in the configuration section.
 First check if VLC is installed or install it if needed:
-```
+
+```bash
   sudo apt update && sudo apt install -y vlc
 ```
 
 Basically you only need to add two lines to the configuration (CUSTOM_COMMAND, CUSTOM_COMMAND_ARGS):
-```
+
+```js
   customCommand: "/usr/bin/vlc",
   customCommandArgs: ["-I","dummy","###URL###"],
 ```
 
 The example configuration from above then looks like:
+
 ```json5
     {
-			module: "MMM-MplayerRadio",
-			header: "Radio",
-			position: "top_center",
-			config: {
-				customCommand: "/usr/bin/vlc",
-  				customCommandArgs: ["-I","dummy","###URL###"],
-				//autoplay: 0,
-				stations: [
-					{
-						title: "Antenne.de",
-						url: "http://play.antenne.de/antenne.m3u",
-						logo: "https://upload.wikimedia.org/wikipedia/commons/a/ac/Antenne-bayern-logo.png",
-					},
-					{
-						title: "Bayern 3",
-						url: "https://streams.br.de/bayern3_1.m3u",
-						logo: "https://upload.wikimedia.org/wikipedia/de/thumb/d/d3/Bayern_3.svg/200px-Bayern_3.svg.png",
-					},
-					{
-						title: "Rock Antenne",
-						url: "http://play.rockantenne.de/rockantenne.m3u",
-						logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Rock_Antenne_Logo_2017.svg/200px-Rock_Antenne_Logo_2017.svg.png",
-					},
-					{
-						title: "Radio Gong",
-						url: "http://www.surfmusik.de/m3u/gong-96-3-muenchen,2021.m3u",
-						logo: "https://upload.wikimedia.org/wikipedia/commons/7/78/Radio_Gong_96.3_Logo.png",
-					}
-				],
-				displayStationsOnStartup: true
-			},
-		},
+   module: "MMM-MplayerRadio",
+   header: "Radio",
+   position: "top_center",
+   config: {
+    customCommand: "/usr/bin/vlc",
+      customCommandArgs: ["-I","dummy","###URL###"],
+    //autoplay: 0,
+    stations: [
+     {
+      title: "Antenne.de",
+      url: "http://play.antenne.de/antenne.m3u",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/a/ac/Antenne-bayern-logo.png",
+     },
+     {
+      title: "Bayern 3",
+      url: "https://streams.br.de/bayern3_1.m3u",
+      logo: "https://upload.wikimedia.org/wikipedia/de/thumb/d/d3/Bayern_3.svg/200px-Bayern_3.svg.png",
+     },
+     {
+      title: "Rock Antenne",
+      url: "http://play.rockantenne.de/rockantenne.m3u",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Rock_Antenne_Logo_2017.svg/200px-Rock_Antenne_Logo_2017.svg.png",
+     },
+     {
+      title: "Radio Gong",
+      url: "http://www.surfmusik.de/m3u/gong-96-3-muenchen,2021.m3u",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/7/78/Radio_Gong_96.3_Logo.png",
+     }
+    ],
+    displayStationsOnStartup: true
+   },
+  },
 ```
 
 **In consequence no stream information is provided because VLC does not evaluate the information send by the stations!**
 
 ### XMMS2 ###
+
 If you prefere xmms2 to play the radio streams instead of mplayer you will find an custom script "playRadio.bash" in the scripts folder. There is a example config in the examples directory, too.
 
 ### STREAMLINK ###
+
 If you want to listen to a stream which does not send continously you may want to use the streamlinkWrapper.bash script in the scripts directory. It supports auto reconnects. An example config can be found in the examples directory. The first option is the time to wait for the stream to send data. The second option is the time to wait between to reconnect attempts. And the third is the url of the stream.
 
 Make sure to install streamlink i.e. with these commands:
-```
+
+```bash
 sudo apt -y update && sudo apt -y install streamlink
 ```
 
+### HiFiBerryOS ###
+
+There is included a wrapper to control a remote instance of HiFiBerryOS in the scripts directory now.  
+Make sure to setup password-less ssh with key authentication to to the host running HiFiBerryOS first (i.e. with this tutorial [https://www.digitalocean.com/community/tutorials/how-to-configure-ssh-key-based-authentication-on-a-linux-server](https://www.digitalocean.com/community/tutorials/how-to-configure-ssh-key-based-authentication-on-a-linux-server)).  
+**Make sure to use mp3 streams instead of m3u!**
+
+The proper module configuration will look something like (replace "hifiberry.local" with the hostname or ip of the HiFiBerryOS host):
+
+```js
+  {
+     module: "MMM-MplayerRadio",
+     header: "Radio",
+     position: "top_center",
+     config: {
+       customCommand: "./modules/MMM-MplayerRadio/scripts/hifiberryOS.bash",
+       customCommandArgs: ["###URL###", "root", "hifiberry.local", "2"],
+       stations: [
+          {
+            title: "Rock Antenne",
+            url: "https://stream.rockantenne.de/rockantenne/stream/mp3",
+            logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Rock_Antenne_Logo_2017.svg/200px-Rock_Antenne_Logo_2017.svg.png",
+          },
+       ],
+     },
+  },
+```
+
+In this setup the user `root` is used to connect to HiFiBerryOS (which is the default user of HiFiBerryOS) and the check if the station is still played will run all `2` seconds.
+
+If you want to use the [MMM-Volume](https://github.com/Anonym-tsk/MMM-Volume) module to control the volume you can make use of the build in REST-API with the following configuration (and again replace "hifiberry.local" with the hostname or ip of the HiFiBerryOS host):
+
+```js
+  {
+    module: "MMM-Volume",
+    position: "top_left", // It is meaningless. but you should set.
+    config: {
+      setVolumeScript: `curl -X POST -H "Content-Type: application/json" -d '{"percent":"#VOLUME#"}' http://hifiberry.local:81/api/volume`,
+      getVolumeScript: `curl -sX GET http://hifiberry.local:81/api/volume | grep -oE "[[:digit:]]+\.[[:digit:]]" | grep -oE "^[^\.]+"`,
+      usePresetScript: null,
+    }
+  },
+```
+
 ### General ###
+
 | Option  | Description | Type | Default |
 | ------- | --- | --- | --- |
 | autoplay | If you like to play a station automatically after the module starts simply specify its index (starting with 0) here | Integer | null |
@@ -188,6 +255,7 @@ sudo apt -y update && sudo apt -y install streamlink
 The custom commands either can be configured in the global module configuration and then will be used for all stations or it can be configured for each station individually!
 
 ### Stations ###
+
 | Option  | Description | Mandatory |
 | ------- | --- | --- |
 | title | The title of the station which will be displayed beside the logo | true |
@@ -198,8 +266,8 @@ The custom commands either can be configured in the global module configuration 
 | customCommand | If you like to run an different command special for this station you can pass it with this variable. The only condition is that the command needs to run as long as the station is active. | false |
 | customCommandArgs | If you use the customCommand for this station you can pass as many argument to it as you like in this array. "###URL###" will be replaced with the url of the station | false |
 
-
 ## Supported Notifications ##
+
 | Notification | Payload | Description |
 | ------------ | ------- | ----------- |
 | RADIO_PLAY | Either "id" or "title" or nothing | If an "id" or "name" attribute is provied the specific station is played. If nothing is specified a (for the current profile) suitable is been choosen |
