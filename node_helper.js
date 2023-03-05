@@ -17,13 +17,13 @@ module.exports = NodeHelper.create({
     this.playing = false
   },
 
-  playStation: function(stationId = null){
+  playStation: async function(stationId = null){
     const self = this
     self.inStreamInfo = false
     self.curStreamInfo = "&nbsp;"
 
     if(stationId !== null){
-      self.stopStation(false)
+      await self.stopStation(false)
       self.curStationIndex = stationId
 
       if((self.config.customCommand) || (self.config.stations[self.curStationIndex].customCommand)){
@@ -57,6 +57,11 @@ module.exports = NodeHelper.create({
           )
 
         self.playing = true
+
+        self.curStationProcess.stdout.on("data", (data) =>{
+          console.log(data.toString())
+        })
+
         self.curStationProcess.on("close", (err) =>{
           if(err !== 1){
             self.sendSocketNotification("RADIO_STOPPED", {
@@ -152,14 +157,42 @@ module.exports = NodeHelper.create({
     }
   },
 
-  stopStation: function(sendStatus=true){
+  sleep: function (ms) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
+  },
+
+  stopStation: async function(sendStatus=true){
     const self = this
     self.playing = false
     self.inStreamInfo = false
     self.curStreamInfo = "&nbsp;"
     if(self.curStationProcess){
       console.log("Killing old station process")
+      let maxWait = 5000
+      let interval = 500
+      let stillWait = true
+
+      if(!sendStatus){
+        self.curStationProcess.removeAllListeners("close")
+      }
+
+      self.curStationProcess.on("exit", (err) =>{
+        stillWait = false
+      })
+      
+      
       self.curStationProcess.kill()
+      
+      console.log("Waiting for old process to stop")
+      while ((stillWait) && (maxWait > 0)){
+        maxWait -= interval
+        await self.sleep(interval)
+        console.log("Still waiting")
+      }
+      console.log("Finished waiting with "+maxWait+"ms left to the maximum.")
+      
       self.curStationProcess = null
     }
 
