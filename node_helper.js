@@ -57,6 +57,13 @@ module.exports = NodeHelper.create({
           )
 
         self.playing = true
+        self.curStationProcess.on("close", (err) =>{
+          if(err !== 1){
+            self.sendSocketNotification("RADIO_STOPPED", {
+              curStationIndex: self.curStationIndex,
+            })
+          }
+        })
 
         self.sendSocketNotification("RADIO_PLAYING",{
           curStationIndex: self.curStationIndex,
