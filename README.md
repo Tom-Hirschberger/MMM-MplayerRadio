@@ -163,6 +163,38 @@ The example configuration from above then looks like:
 
 **In consequence no stream information is provided because VLC does not evaluate the information send by the stations!**
 
+If you do want to set the volume of vlc before a stream gets started you can use the `vlcPaWrapper.bash` wrapper do this.
+You can set the wrapper either in the general configuration or for a single station.
+To use the wrapper you first need to download and compile the `pa_volume` binary which can be found at [https://github.com/rhaas80/pa_volume](https://github.com/rhaas80/pa_volume).
+
+```bash
+cd ~/MagicMirror/modules/MMM-MplayerRadio/scripts
+
+sudo apt-get install -y make pkg-config libpulse-dev pandoc
+
+git clone https://github.com/rhaas80/pa_volume.git
+cd pa_volume/
+make
+
+mv pa_volume/pa_volume .
+```
+
+After this process should have the binary `pa_volume` in the same directory as the wrapper script.
+The first argument for the wrapper call will be the new volume, the second the stream to play.
+
+This example will start the wrapper and plays the "Antenne Bayern" station with a volume of 50%:
+
+```bash
+/home/pi/MagicMirror/modules/MMM-MplayerRadio/scripts/vlcPaWrapper.bash 50 "http://play.antenne.de/antenne.m3u"
+```
+
+The custom commands configuration then will look something like:
+
+```js
+  customCommand: "/home/pi/MagicMirror/modules/MMM-MplayerRadio/scripts/vlcPaWrapper.bash",
+  customCommandArgs: ["50", "###URL###"],
+```
+
 ### XMMS2 ###
 
 If you prefere xmms2 to play the radio streams instead of mplayer you will find an custom script "playRadio.bash" in the scripts folder. There is a example config in the examples directory, too.
