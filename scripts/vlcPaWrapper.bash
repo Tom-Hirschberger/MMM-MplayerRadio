@@ -13,7 +13,13 @@ then
 fi
 
 exit_script() {
-	killall /usr/bin/vlc
+	if [ "$VLC_PID" != "" ]
+	then
+		echo "Kill vlc process with pid $VLC_PID"
+		kill $VLC_PID
+	else
+		echo "VLC is stopped already"
+	fi
 	exit 0
 }
 
@@ -27,4 +33,21 @@ CUR_DIR=`dirname $FILE_PATH`
 PA_VOLUME="$CUR_DIR/pa_volume"
 
 "$PA_VOLUME" "$IDENTIFIER" "$NEW_VOLUME"
-/usr/bin/cvlc -I dummy "$STREAM"
+/usr/bin/vlc -I dummy "$STREAM" &
+sleep 1
+VLC_PID=$!
+echo "PID is $VLC_PID"
+
+while true; do
+	ps -p $VLC_PID > /dev/null
+	RUNNING=$?
+	if [ $RUNNING -lt 1 ]
+	then
+		echo "Still playing"
+		sleep 1
+	else
+		echo "VLC stopped"
+		VLC_PID=""
+		exit 0
+	fi
+done
