@@ -12,6 +12,13 @@ then
 	exit 1
 fi
 
+exit_script() {
+	killall /usr/bin/vlc
+	exit 0
+}
+
+trap exit_script exit
+
 NEW_VOLUME=$1
 STREAM=$2
 IDENTIFIER="video"
@@ -20,4 +27,4 @@ CUR_DIR=`dirname $FILE_PATH`
 PA_VOLUME="$CUR_DIR/pa_volume"
 
 "$PA_VOLUME" "$IDENTIFIER" "$NEW_VOLUME"
-/usr/bin/vlc -I dummy "$STREAM"
+/usr/bin/cvlc -I dummy "$STREAM"
