@@ -1,10 +1,11 @@
 #!/bin/bash
 #You need https://github.com/rhaas80/pa_volume compiled and moved to the same directory as this script to get this running:
+#cd ~
 #sudo apt-get install -y make pkg-config libpulse-dev pandoc
 #git clone https://github.com/rhaas80/pa_volume.git
 #cd pa_volume/
 #make
-#mv pa_volume/pa_volume .
+#mv pa_volume /usr/local/bin
 #
 if [ $# -lt 2 ]
 then
@@ -28,12 +29,12 @@ trap exit_script exit
 NEW_VOLUME=$1
 STREAM=$2
 IDENTIFIER="video"
-FILE_PATH=`readlink -f $0`
-CUR_DIR=`dirname $FILE_PATH`
-PA_VOLUME="$CUR_DIR/pa_volume"
+#FILE_PATH=`readlink -f $0`
+#CUR_DIR=`dirname $FILE_PATH`
+PA_VOLUME="/usr/local/bin/pa_volume"
 
 "$PA_VOLUME" "$IDENTIFIER" "$NEW_VOLUME"
-/usr/bin/vlc -I dummy "$STREAM" &
+/usr/bin/vlc -vvv -I dummy "$STREAM" &
 sleep 1
 VLC_PID=$!
 echo "PID is $VLC_PID"

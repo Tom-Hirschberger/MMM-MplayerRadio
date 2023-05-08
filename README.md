@@ -168,7 +168,7 @@ You can set the wrapper either in the general configuration or for a single stat
 To use the wrapper you first need to download and compile the `pa_volume` binary which can be found at [https://github.com/rhaas80/pa_volume](https://github.com/rhaas80/pa_volume).
 
 ```bash
-cd ~/MagicMirror/modules/MMM-MplayerRadio/scripts
+cd ~/
 
 sudo apt-get install -y make pkg-config libpulse-dev pandoc
 
@@ -176,7 +176,7 @@ git clone https://github.com/rhaas80/pa_volume.git
 cd pa_volume/
 make
 
-mv pa_volume/pa_volume .
+mv pa_volume /usr/local/bin
 ```
 
 After this process should have the binary `pa_volume` in the same directory as the wrapper script.
