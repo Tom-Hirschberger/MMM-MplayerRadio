@@ -180,7 +180,7 @@ sudo mv pa_volume /usr/local/sbin
 sudo chmod a+x /usr/local/sbin/pa_volume
 ```
 
-After this process should have the binary `pa_volume` in the same directory as the wrapper script.
+After this process should have the binary `pa_volume` in the directory `/usr/local/sbin`.
 The first argument for the wrapper call will be the new volume, the second the stream to play.
 
 This example will start the wrapper and plays the "Antenne Bayern" station with a volume of 50%:
