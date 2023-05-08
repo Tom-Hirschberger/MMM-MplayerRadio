@@ -177,7 +177,7 @@ cd pa_volume/
 make
 
 sudo mv pa_volume /usr/local/sbin
-sudo chmod a+x /usr/local/bin/pa_volume
+sudo chmod a+x /usr/local/sbin/pa_volume
 ```
 
 After this process should have the binary `pa_volume` in the same directory as the wrapper script.
