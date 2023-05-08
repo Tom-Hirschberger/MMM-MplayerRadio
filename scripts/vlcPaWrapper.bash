@@ -5,7 +5,8 @@
 #git clone https://github.com/rhaas80/pa_volume.git
 #cd pa_volume/
 #make
-#mv pa_volume /usr/local/bin
+#sudo mv pa_volume /usr/local/sbin
+#sudo chmod a+x /usr/local/sbin/pa_volume
 #
 if [ $# -lt 2 ]
 then

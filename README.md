@@ -176,7 +176,8 @@ git clone https://github.com/rhaas80/pa_volume.git
 cd pa_volume/
 make
 
-mv pa_volume /usr/local/bin
+sudo mv pa_volume /usr/local/sbin
+sudo chmod a+x /usr/local/bin/pa_volume
 ```
 
 After this process should have the binary `pa_volume` in the same directory as the wrapper script.
