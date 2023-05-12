@@ -15,6 +15,21 @@ module.exports = NodeHelper.create({
     this.inStreamInfo = false
     this.curStreamInfo = "&nbsp;"
     this.playing = false
+	this.breakOffFirstLine = /\r?\n/
+  },
+
+  filterStdoutDataDumpsToTextLines: function (callback){ //returns a function that takes chunks of stdin data, aggregates it, and passes lines one by one through to callback, all as soon as it gets them.
+	const self = this
+    var acc = ''
+    return function(data){
+        var splitted = data.toString().split(self.breakOffFirstLine)
+        var inTactLines = splitted.slice(0, splitted.length-1)
+        inTactLines[0] = acc+inTactLines[0] //if there was a partial, unended line in the previous dump, it is completed by the first section.
+        acc = splitted[splitted.length-1] //if there is a partial, unended line in this dump, store it to be completed by the next (we assume there will be a terminating newline at some point. This is, generally, a safe assumption.)
+        for(var i=0; i<inTactLines.length; ++i){
+            callback(inTactLines[i])
+        }
+    }
   },
 
   playStation: async function(stationId = null){
@@ -24,6 +39,10 @@ module.exports = NodeHelper.create({
 
     if(stationId !== null){
       await self.stopStation(false)
+	  self.sendSocketNotification("RADIO_CURRENT_STREAM_INFO", {
+		curStationIndex: self.curStationIndex,
+		curStreamInfo: self.curStreamInfo
+	  })
       self.curStationIndex = stationId
 
       if((self.config.customCommand) || (self.config.stations[self.curStationIndex].customCommand)){
@@ -45,8 +64,8 @@ module.exports = NodeHelper.create({
             curArgs[curIdx] = curConfigArgs[curIdx]
           }
         }
-        
-        console.log("Running "+curCmd+ "with args: "+JSON.stringify(curArgs))
+
+        console.log("Running "+curCmd+ " with args: "+JSON.stringify(curArgs))
 
         self.curStationProcess = spawn(curCmd,
           args = curArgs,
@@ -58,9 +77,16 @@ module.exports = NodeHelper.create({
 
         self.playing = true
 
-        self.curStationProcess.stdout.on("data", (data) =>{
-          console.log(data.toString())
-        })
+        self.curStationProcess.stdout.on('data', self.filterStdoutDataDumpsToTextLines(function(dataString){
+			if(dataString.indexOf("New Icy-Title=") > -1){
+				self.curStreamInfo = dataString.substring(dataString.indexOf("New Icy-Title=")+14)
+				self.inStreamInfo = false
+				self.sendSocketNotification("RADIO_CURRENT_STREAM_INFO", {
+					curStationIndex: self.curStationIndex,
+					curStreamInfo: self.curStreamInfo
+				})
+			}
+		}) )
 
         self.curStationProcess.on("close", (err) =>{
           if(err !== 1){
@@ -181,10 +207,10 @@ module.exports = NodeHelper.create({
       self.curStationProcess.on("exit", (err) =>{
         stillWait = false
       })
-      
-      
+
+
       self.curStationProcess.kill()
-      
+
       console.log("Waiting for old process to stop")
       while ((stillWait) && (maxWait > 0)){
         maxWait -= interval
@@ -192,7 +218,7 @@ module.exports = NodeHelper.create({
         console.log("Still waiting")
       }
       console.log("Finished waiting with "+maxWait+"ms left to the maximum.")
-      
+
       self.curStationProcess = null
     }
 

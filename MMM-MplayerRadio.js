@@ -41,7 +41,7 @@ Module.register('MMM-MplayerRadio', {
     } else {
       return ['mplayer-radio.css'];
     }
-    
+
   },
 
   getScripts: function() {
@@ -95,7 +95,7 @@ Module.register('MMM-MplayerRadio', {
           self.curStationIndex = self.getNextStationId(0, type=0)
         }
       }
-      
+
     }
   },
 
@@ -113,11 +113,11 @@ Module.register('MMM-MplayerRadio', {
         } else {
           stationWrapper.className = "station selected stopped"
         }
-        
+
       } else {
         stationWrapper.className = "station unselected"
       }
-      
+
       let stationInnerWrapper = document.createElement("div")
         stationInnerWrapper.className = "innerWrapper"
         if(self.config.showLogos){
@@ -140,7 +140,7 @@ Module.register('MMM-MplayerRadio', {
             stationTitleWrapper.innerHTML = self.config.stations[curId].title
           stationInnerWrapper.appendChild(stationTitleWrapper)
         }
-        
+
       stationWrapper.appendChild(stationInnerWrapper)
     return stationWrapper
   },
@@ -150,6 +150,7 @@ Module.register('MMM-MplayerRadio', {
     let streamInfoWrapper = document.createElement("div")
       streamInfoWrapper.className = "streamInfoWrapper"
 
+	  console.log("CUR_STREAM_INFO2: "+self.curStreamInfo)
       if (self.curStreamInfo != null){
         streamInfoWrapper.innerHTML = self.curStreamInfo
       }
@@ -254,12 +255,12 @@ Module.register('MMM-MplayerRadio', {
             if (self.config.scrollableStations || (self.getNumberOfStationsInCurrentProfile() < ((self.config.stationsBeforeAndAfter * 2)+1))){
               for (let curId = 0; curId < self.config.stations.length; curId ++){
                 if(
-                  (typeof self.config.stations[curId].profiles === 'undefined') || 
+                  (typeof self.config.stations[curId].profiles === 'undefined') ||
                   (self.currentProfilePattern.test(self.config.stations[curId].profiles))
                 ){
                   stationsWrapper.appendChild(self.getStationDomObject(curId))
                 }
-                
+
               }
             } else {
               let stationBeforeIdx = self.curStationIndex
@@ -274,7 +275,7 @@ Module.register('MMM-MplayerRadio', {
               }
 
               stationsWrapper.appendChild(self.getStationDomObject(self.curStationIndex))
-              
+
               let curNextId = self.getNextStationId(self.curStationIndex, type=-1)
               for (let stationAfterIdx = 0; stationAfterIdx < self.config.stationsBeforeAndAfter; stationAfterIdx += 1){
                 stationsWrapper.appendChild(self.getStationDomObject(curNextId))
@@ -286,7 +287,9 @@ Module.register('MMM-MplayerRadio', {
       }
 
       if(self.config.showStreamInfo){
-        wrapper.appendChild(self.getStreamInfoDom())
+		console.log("CUR_STREAM_INFO: "+self.curStreamInfo)
+		self.streamInfoObj = self.getStreamInfoDom()
+        wrapper.appendChild(self.streamInfoObj)
       }
 
       if(self.config.showControls){
@@ -305,7 +308,7 @@ Module.register('MMM-MplayerRadio', {
       let curCount = 0;
       for (let curId = 0; curId < self.config.stations.length; curId ++){
         if(
-          (typeof self.config.stations[curId].profiles === 'undefined') || 
+          (typeof self.config.stations[curId].profiles === 'undefined') ||
           (self.currentProfilePattern.test(self.config.stations[curId].profiles))
         ){
           curCount += 1
@@ -328,10 +331,10 @@ Module.register('MMM-MplayerRadio', {
           if(newId < 0){
             newId = self.config.stations.length - 1
           }
-  
+
           if(
-            (typeof self.config.stations[newId].profiles === 'undefined') || 
-            ((typeof self.currentProfilePattern !== 'undefined') && 
+            (typeof self.config.stations[newId].profiles === 'undefined') ||
+            ((typeof self.currentProfilePattern !== 'undefined') &&
             (self.currentProfilePattern.test(self.config.stations[newId].profiles)))
           ){
             retId = newId
@@ -346,10 +349,10 @@ Module.register('MMM-MplayerRadio', {
           if(newId > self.config.stations.length - 1){
             newId = 0
           }
-  
+
           if(
-            (typeof self.config.stations[newId].profiles === 'undefined') || 
-            ((typeof self.currentProfilePattern !== 'undefined') && 
+            (typeof self.config.stations[newId].profiles === 'undefined') ||
+            ((typeof self.currentProfilePattern !== 'undefined') &&
             (self.currentProfilePattern.test(self.config.stations[newId].profiles)))
           ){
             retId = newId
@@ -358,8 +361,8 @@ Module.register('MMM-MplayerRadio', {
         }
       } else if(type === 0){
         if(
-          (typeof self.config.stations[curId].profiles === 'undefined') || 
-          ((typeof self.currentProfilePattern !== 'undefined') && 
+          (typeof self.config.stations[curId].profiles === 'undefined') ||
+          ((typeof self.currentProfilePattern !== 'undefined') &&
           (self.currentProfilePattern.test(self.config.stations[curId].profiles)))
         ){
           console.log("Station with id: "+curId+" is ok for profile: "+self.currentProfile)
@@ -394,7 +397,7 @@ Module.register('MMM-MplayerRadio', {
 
         if(self.config.changeStationOnProfileChange){
           var newId = self.getNextStationId(self.curStationIndex, 0)
-  
+
           if(newId !== self.curStationIndex){
             self.curStationIndex = newId
             if(self.playing){
@@ -412,7 +415,7 @@ Module.register('MMM-MplayerRadio', {
     } else if (notification === 'RADIO_NEXT'){
       self.sendSocketNotification("RADIO_PLAY", {
         id: self.getNextStationId(self.curStationIndex, -1),
-      })      
+      })
     } else if (notification === 'RADIO_PREVIOUS'){
       self.sendSocketNotification("RADIO_PLAY", {
         id: self.getNextStationId(self.curStationIndex, 1),
@@ -437,8 +440,8 @@ Module.register('MMM-MplayerRadio', {
       }
 
       if (
-        (typeof payload['id'] === "undefined") && 
-        (typeof payload['id'] === "undefined") 
+        (typeof payload['id'] === "undefined") &&
+        (typeof payload['id'] === "undefined")
       ){
         payload["id"] = self.curStationIndex
       }
@@ -458,14 +461,14 @@ Module.register('MMM-MplayerRadio', {
       this.playing = false
       this.updateDom(this.config.animationSpeed)
     } else if(notification === "RADIO_CURRENT_STREAM_INFO"){
-      console.log("Updating Stream Info")
+      console.log("Updating Stream Info: "+payload.curStreamInfo)
       this.curStreamInfo = payload.curStreamInfo
       this.playing = true
       //this.updateDom(this.config.animationSpeed)
       if (this.streamInfoObj !== null){
         this.streamInfoObj.innerHTML = this.curStreamInfo
       }
-      
+
     }
   },
 
