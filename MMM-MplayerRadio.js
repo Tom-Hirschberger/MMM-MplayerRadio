@@ -150,9 +150,10 @@ Module.register('MMM-MplayerRadio', {
     let streamInfoWrapper = document.createElement("div")
       streamInfoWrapper.className = "streamInfoWrapper"
 
-	  console.log("CUR_STREAM_INFO2: "+self.curStreamInfo)
       if (self.curStreamInfo != null){
         streamInfoWrapper.innerHTML = self.curStreamInfo
+      } else {
+        streamInfoWrapper.innerHTML = "&nbsp;"
       }
     return streamInfoWrapper
   },
