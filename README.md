@@ -1,10 +1,12 @@
 
 # MMM-MplayerRadio #
 
-This module plays .m3u playlists with the system mplayer instance. Multiple stations are supported and can be switched either by notification or touch control. The currently played station is highlighted. If the radio station provides stream info (current song, studio hotline, etc.) the information will be displayed, too.
+This module plays .m3u playlists with the system `mplayer` instance. It is possible to use other players as well. There are several wrapper included (i.e. for `vlc`).  
+
+Multiple stations are supported and can be switched either by notification or touch control. The currently played station is highlighted. If the radio station provides stream info (current song, studio hotline, etc.) the information will be displayed, too.  
 Different stations can be used in different profiles (profile string in configuration).
 
-**Currently mplayer has a lot of problems and is not able to play streams properly. Also there is a problem that there is no sound on some devices since Rasperry OS moved to PulsAudio instead auf ALSA (December 2020). To avoid this problems i strongly suggest to use the VLC player instaed. In consequence no stream information will be provided. There is an description in the configuration section on how to change to the VLC player!**
+**Currently `mplayer` has a lot of problems and is not able to play streams properly. Also there is a problem that there is no sound on some devices since Rasperry OS moved to PulsAudio instead auf ALSA (December 2020). To avoid this problems i strongly suggest to use the VLC player instaed. In consequence no stream information will be provided in versions 0.0.X of this module. In version 0.1.X and above stream information will be provided if the `vlcWrapper.bash` is used. There is an description in the configuration section on how to change to the VLC player!**
 
 **If you want to use the volume buttons please make sure to install the <https://github.com/Anonym-tsk/MMM-Volume> module.**
 
@@ -26,6 +28,8 @@ Hint: It may be possible to play any songs you like by creating an .m3u file of 
 ### System ###
 
 #### Mplayer ####
+
+**I suggest to use the `vlcWrapper.bash` instead!**
 
 Make sure you installed mplayer on your system. Simple type the following command
 
@@ -116,11 +120,11 @@ First check if VLC is installed or install it if needed:
   sudo apt update && sudo apt install -y vlc
 ```
 
-Basically you only need to add two lines to the configuration (CUSTOM_COMMAND, CUSTOM_COMMAND_ARGS):
+Basically you only need to add two lines to the configuration (CUSTOM_COMMAND, CUSTOM_COMMAND_ARGS). Make sure to set the path of the wrapper to the path of your installation. It is `./modules/MMM-MplayerRadio/scripts/vlcWrapper.bash` in usual installations but may be different in your case:
 
 ```js
-  customCommand: "/usr/bin/vlc",
-  customCommandArgs: ["-I","dummy","###URL###"],
+  customCommand: "./modules/MMM-MplayerRadio/scripts/vlcWrapper.bash",
+  customCommandArgs: ["###URL###"],
 ```
 
 The example configuration from above then looks like:
@@ -131,8 +135,8 @@ The example configuration from above then looks like:
    header: "Radio",
    position: "top_center",
    config: {
-    customCommand: "/usr/bin/vlc",
-      customCommandArgs: ["-I","dummy","###URL###"],
+    customCommand: "./modules/MMM-MplayerRadio/scripts/vlcWrapper.bash",
+    customCommandArgs: ["###URL###"],
     //autoplay: 0,
     stations: [
      {
@@ -161,7 +165,7 @@ The example configuration from above then looks like:
   },
 ```
 
-**In consequence no stream information is provided because VLC does not evaluate the information send by the stations!**
+**Stream information is only provided if you use version 0.1.X and above of this module!**
 
 If you do want to set the volume of vlc before a stream gets started you can use the `vlcPaWrapper.bash` wrapper do this.
 You can set the wrapper either in the general configuration or for a single station.
@@ -186,13 +190,13 @@ The first argument for the wrapper call will be the new volume, the second the s
 This example will start the wrapper and plays the "Antenne Bayern" station with a volume of 50%:
 
 ```bash
-/home/pi/MagicMirror/modules/MMM-MplayerRadio/scripts/vlcPaWrapper.bash 50 "http://play.antenne.de/antenne.m3u"
+./modules/MMM-MplayerRadio/scripts/vlcPaWrapper.bash 50 "http://play.antenne.de/antenne.m3u"
 ```
 
 The custom commands configuration then will look something like:
 
 ```js
-  customCommand: "/home/pi/MagicMirror/modules/MMM-MplayerRadio/scripts/vlcPaWrapper.bash",
+  customCommand: "./modules/MMM-MplayerRadio/scripts/vlcPaWrapper.bash",
   customCommandArgs: ["50", "###URL###"],
 ```
 
