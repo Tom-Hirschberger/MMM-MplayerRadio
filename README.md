@@ -113,7 +113,7 @@ You can try it without an asound.conf. If you get no sound try adding this one a
 
 ### VLC Player instead of Mplayer ###
 
-As mention above Mplayer has a lot of problems to play streams currently. My personal suggestion is to switch to VLC player instead by setting a custom command in the configuration section.
+As mentioned above `mplayer` has a lot of problems to play streams currently. My personal suggestion is to switch to VLC player instead by setting a custom command in the configuration section.
 First check if VLC is installed or install it if needed:
 
 ```bash
