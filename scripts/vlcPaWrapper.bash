@@ -35,7 +35,7 @@ IDENTIFIER="video"
 PA_VOLUME="/usr/local/sbin/pa_volume"
 
 "$PA_VOLUME" "$IDENTIFIER" "$NEW_VOLUME"
-/usr/bin/vlc -vvv -I dummy "$STREAM" 2>&1 &
+/usr/bin/vlc -vvv -I dummy "$STREAM" vlc://quit 2>&1 &
 sleep 1
 VLC_PID=$!
 echo "PID is $VLC_PID"

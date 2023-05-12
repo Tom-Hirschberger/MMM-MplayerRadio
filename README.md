@@ -19,9 +19,9 @@ Hint: It may be possible to play any songs you like by creating an .m3u file of 
 
 ### In Action ###
 
-![alt text](https://github.com/Tom-Hirschberger/MMM-MplayerRadio/raw/master/examples/threeStationsOnePlaying.png "ThreeStations with one playing and volume controls")
+![alt text](./examples/threeStationsOnePlaying.png "ThreeStations with one playing and volume controls")
 
-![alt text](https://github.com/Tom-Hirschberger/MMM-MplayerRadio/raw/master/examples/threeStationsStopped.png "ThreeStations with stopped state")
+![alt text](./examples/threeStationsStopped.png "ThreeStations with stopped state")
 
 ## Installation ##
 
@@ -104,7 +104,7 @@ You can try it without an asound.conf. If you get no sound try adding this one a
      {
       title: "Radio Gong",
       url: "http://www.surfmusik.de/m3u/gong-96-3-muenchen,2021.m3u",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/7/78/Radio_Gong_96.3_Logo.png",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Logo_Gong_96%2C3.svg/1024px-Logo_Gong_96%2C3.svg.png",
      }
     ],
    },
@@ -157,7 +157,7 @@ The example configuration from above then looks like:
      {
       title: "Radio Gong",
       url: "http://www.surfmusik.de/m3u/gong-96-3-muenchen,2021.m3u",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/7/78/Radio_Gong_96.3_Logo.png",
+      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Logo_Gong_96%2C3.svg/1024px-Logo_Gong_96%2C3.svg.png",
      }
     ],
     displayStationsOnStartup: true

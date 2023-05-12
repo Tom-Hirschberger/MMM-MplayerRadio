@@ -20,7 +20,7 @@ trap exit_script exit
 
 STREAM=$1
 
-/usr/bin/vlc -vvv -I dummy "$STREAM" 2>&1 &
+/usr/bin/vlc -vvv -I dummy "$STREAM" vlc://quit 2>&1 &
 sleep 1
 VLC_PID=$!
 echo "PID is $VLC_PID"
