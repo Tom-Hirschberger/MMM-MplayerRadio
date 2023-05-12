@@ -97,14 +97,14 @@ You can try it without an asound.conf. If you get no sound try adding this one a
       logo: "https://upload.wikimedia.org/wikipedia/commons/a/ac/Antenne-bayern-logo.png",
      },
      {
+      title: "Bayern 3",
+      url: "https://streams.br.de/bayern3_1.m3u",
+      logo: "https://upload.wikimedia.org/wikipedia/de/thumb/d/d3/Bayern_3.svg/200px-Bayern_3.svg.png",
+     },
+     {
       title: "Rock Antenne",
       url: "http://play.rockantenne.de/rockantenne.m3u",
       logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Rock_Antenne_Logo_2017.svg/200px-Rock_Antenne_Logo_2017.svg.png",
-     },
-     {
-      title: "Radio Gong",
-      url: "http://www.surfmusik.de/m3u/gong-96-3-muenchen,2021.m3u",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Logo_Gong_96%2C3.svg/1024px-Logo_Gong_96%2C3.svg.png",
      }
     ],
    },
@@ -153,11 +153,6 @@ The example configuration from above then looks like:
       title: "Rock Antenne",
       url: "http://play.rockantenne.de/rockantenne.m3u",
       logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Rock_Antenne_Logo_2017.svg/200px-Rock_Antenne_Logo_2017.svg.png",
-     },
-     {
-      title: "Radio Gong",
-      url: "http://www.surfmusik.de/m3u/gong-96-3-muenchen,2021.m3u",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Logo_Gong_96%2C3.svg/1024px-Logo_Gong_96%2C3.svg.png",
      }
     ],
     displayStationsOnStartup: true
