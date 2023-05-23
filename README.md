@@ -195,6 +195,14 @@ The custom commands configuration then will look something like:
   customCommandArgs: ["50", "###URL###"],
 ```
 
+Both the `vlcWrapper.bash` and `vlcPaWrapper.bash` support adding additonal custom arguments that will be added to the vlc command line.
+If you i.e. want vlc to ignore certificate errors while connecting to a https stream you can set the option `--http-no-ssl-verify` like in this example:
+
+```js
+  customCommand: "./modules/MMM-MplayerRadio/scripts/vlcWrapper.bash",
+  customCommandArgs: ["###URL###","--http-no-ssl-verify"],
+```
+
 ### XMMS2 ###
 
 If you prefere xmms2 to play the radio streams instead of mplayer you will find an custom script "playRadio.bash" in the scripts folder. There is a example config in the examples directory, too.
