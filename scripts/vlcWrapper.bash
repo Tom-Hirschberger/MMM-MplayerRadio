@@ -19,8 +19,15 @@ exit_script() {
 trap exit_script exit
 
 STREAM=$1
+ADD_ARG_CNT=$(($#-1))
+if [ ${ADD_ARG_CNT} -gt 0 ]
+then
+	ADD_OPTS=${@:2:$ADD_ARG_CNT}
+else
+	ADD_OPTS=""
+fi
 
-/usr/bin/vlc -vvv -I dummy "$STREAM" vlc://quit 2>&1 &
+/usr/bin/vlc -vvv ${ADD_OPTS} -I dummy "$STREAM" vlc://quit 2>&1 &
 sleep 1
 VLC_PID=$!
 echo "PID is $VLC_PID"
