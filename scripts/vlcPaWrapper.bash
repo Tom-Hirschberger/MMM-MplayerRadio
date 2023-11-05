@@ -19,6 +19,8 @@ exit_script() {
 	then
 		echo "Kill vlc process with pid $VLC_PID"
 		kill $VLC_PID
+		sleep 1
+		kill -9 $VLC_PID
 	else
 		echo "VLC is stopped already"
 	fi
