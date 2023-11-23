@@ -1,4 +1,4 @@
-/* Magic Mirror
+/* MagicMirror²
  * Module: MplayerRadio
  *
  * By Tom Hirschberger

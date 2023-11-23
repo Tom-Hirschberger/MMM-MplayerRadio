@@ -1,7 +1,7 @@
 {
   "name": "MMM-MplayerRadio",
   "version": "0.1.3",
-  "description": "",
+  "description": "A MagicMirror² module to play radio streams or music files on the mirror. The module can be controlled either by touch or by notifications.",
   "main": "MMM-MplayerRadio.js",
   "dependencies": {
     "child_process": "latest"
@@ -10,6 +10,15 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": [
+    "MagicMirror",
+    "MM",
+    "sound",
+    "radio",
+    "stream",
+    "audio",
+    "mp3"
+  ],
   "repository": {
     "type": "git",
     "url": "git@github.com:Tom-Hirschberger/MMM-MplayerRadio.git"

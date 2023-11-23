@@ -1,3 +1,11 @@
+/* global Module
+
+/* MagicMirror²
+ * Module: MplayerRadio
+ *
+ * By Tom Hirschberger
+ * MIT Licensed.
+ */
 Module.register('MMM-MplayerRadio', {
 
   /**
