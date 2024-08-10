@@ -331,6 +331,11 @@ Module.register('MMM-MplayerRadio', {
   getNextStationId: function(curId, type=1){
     const self = this
     var retId = null
+    curId = parseInt(curId)
+    if (isNaN(curId)){
+      curId = null
+    }
+
     if(curId !== null){
       if(type > 0){
         console.log("Searching for fitting prev station")
